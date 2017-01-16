@@ -42,6 +42,10 @@ class EventManager:
     def __init__(self):
         pass
 
+class Component:
+    def __init__(self):
+        pass
+
 class ECSApp:
     def __init__(self, entityManager, eventManager):
         self.systems = []

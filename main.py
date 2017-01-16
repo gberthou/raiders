@@ -1,4 +1,18 @@
 import ecs
+from sfml import sf
+
+window = sf.RenderWindow(sf.VideoMode(800, 600), "Raiders")
+window.vertical_synchronization = True
+
+while window.is_open:
+    for event in window.events:
+        if type(event) is sf.CloseEvent:
+            window.close()
+
+    window.clear(sf.Color(0, 255, 0))
+    window.display()
+
+"""
 
 class MyComponent:
     def __init__(self, t = 0):
@@ -24,3 +38,5 @@ myEntityWithComp.addComponent(MyComponent(0))
 
 for i in range(10):
     app.updateAll(28)
+    """
+
