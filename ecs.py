@@ -35,8 +35,8 @@ class EntityManager:
     def removeEntity(self, entity):
         self.entities.remove(entity)
 
-    def getEntitiesWithComponent(self, componentType):
-        return [e for e in self.entities if e.hasComponent(componentType)]
+    def getEntitiesWithComponents(self, componentTypes):
+        return [e for e in self.entities if [c for c in componentTypes if e.hasComponent(c)] == componentTypes]
 
 class EventManager:
     def __init__(self):

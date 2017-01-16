@@ -13,7 +13,6 @@ while window.is_open:
     window.display()
 
 """
-
 class MyComponent:
     def __init__(self, t = 0):
         self.t = t
@@ -21,7 +20,7 @@ class MyComponent:
 class MySystem(ecs.System):
     @staticmethod
     def update(entityManager, eventManager, dt):
-        for entity in entityManager.getEntitiesWithComponent(MyComponent):
+        for entity in entityManager.getEntitiesWithComponents([MyComponent]):
             entity.component(MyComponent).t += dt
             print("New t:", entity.component(MyComponent).t)
 
@@ -38,5 +37,5 @@ myEntityWithComp.addComponent(MyComponent(0))
 
 for i in range(10):
     app.updateAll(28)
-    """
+"""
 
