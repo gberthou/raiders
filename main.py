@@ -1,8 +1,5 @@
 import ecs
-try:
-    from sfml import sf
-except ImportError:
-    import sfml as sf
+from sfml import sf
 
 window = sf.RenderWindow(sf.VideoMode(800, 600), "Raiders")
 window.vertical_synchronization = True
