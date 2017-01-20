@@ -4,30 +4,31 @@ import systems
 
 from sfml import sf
 
-TILE_SIZE = 32
+if __name__ == "__main__":
+    TILE_SIZE = 32
 
-window = sf.RenderWindow(sf.VideoMode(600, 600), "Raiders")
-window.vertical_synchronization = True
+    window = sf.RenderWindow(sf.VideoMode(600, 600), "Raiders")
+    window.vertical_synchronization = True
 
-entityManager = ecs.EntityManager()
-eventManager  = ecs.EventManager()
-app = ecs.ECSApp(entityManager, eventManager)
+    entityManager = ecs.EntityManager()
+    eventManager  = ecs.EventManager()
+    app = ecs.ECSApp(entityManager, eventManager)
 
-app.addSystem(systems.DrawFighter(window))
+    app.addSystem(systems.DrawFighter(window))
 
-pelo = entityManager.createEntity()
-pelo.addComponent(components.Position(100, 100))
-pelo.addComponent(components.Fighter(0, 0, 0, 0))
-pelo.addComponent(components.DrawableFighter(sf.RectangleShape((TILE_SIZE, TILE_SIZE))))
+    pelo = entityManager.createEntity()
+    pelo.addComponent(components.Position(100, 100))
+    pelo.addComponent(components.Fighter(0, 0, 0, 0))
+    pelo.addComponent(components.DrawableFighter(sf.RectangleShape((TILE_SIZE, TILE_SIZE))))
 
-while window.is_open:
-    for event in window.events:
-        if type(event) is sf.CloseEvent:
-            window.close()
+    while window.is_open:
+        for event in window.events:
+            if type(event) is sf.CloseEvent:
+                window.close()
 
-    pelo.component(components.Position).x += 1
+        pelo.component(components.Position).x += 1
 
-    window.clear(sf.Color(0, 255, 0))
-    app.updateAll(0)
-    window.display()
+        window.clear(sf.Color(0, 255, 0))
+        app.updateAll(0)
+        window.display()
 
