@@ -7,23 +7,23 @@ class Pathfinding(ecs.Component):
         self.target = target
 
 class Weapon(ecs.Component):
-    def __init__(self, atk,atkSpeed,atkRange):
+    def __init__(self, atk, atkSpeed, atkRange):
         self.atk = atk
         self.atkSpeed = atkSpeed
         self.atkRange = atkRange
 
 class Armor(ecs.Component):
-    def __init__(self, defense,slowFactor):
+    def __init__(self, defense, slowFactor):
         self.defense = defense
         self.slowFactor = slowFactor
 
 class Vulnerable(ecs.Component):
-    def __init__(self, hpmax,currenthp):
+    def __init__(self, hpmax, currenthp):
         self.hpmax = hpmax
         self.currenthp = currenthp
 
 class Fighter(ecs.Component):
-    def __init__(self, team,movSpeed,fov,movRange):
+    def __init__(self, team, movSpeed, fov, movRange):
         self.team = team
         self.movSpeed = movSpeed
         self.fov = fov
@@ -34,7 +34,7 @@ class PhysicalObject(ecs.Component):
         self.size = size
 
 class Door(ecs.Component):
-    def __init__(self, tile0,tile1,isOpen):
+    def __init__(self, tile0, tile1, isOpen):
         self.tile0 = tile0
         self.tile1 = tile1
         self.isOpen = isOpen
@@ -60,7 +60,7 @@ class DrawableHUD(ecs.Component):
         self.surface = surface
 
 class Position(ecs.Component):
-    def __init__(self, x,y):
+    def __init__(self, x, y):
         self.x = x
         self.y = y
 
