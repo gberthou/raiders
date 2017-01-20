@@ -18,8 +18,7 @@ class Entity:
         return componentType in self.components.keys()
 
 class System:
-    @staticmethod
-    def update(entityManager, eventManager, dt):
+    def update(self, entityManager, eventManager, dt):
         pass
 
 class EntityManager:
@@ -48,18 +47,18 @@ class Component:
 
 class ECSApp:
     def __init__(self, entityManager, eventManager):
-        self.systems = []
+        self.systems = {}
         self.entityManager = entityManager
         self.eventManager = eventManager
 
-    def addSystem(self, systemType):
-        self.systems.append(systemType)
+    def addSystem(self, system):
+        self.systems[type(system)] = system
 
     def updateSystem(self, systemType, dt):
-        if systemType in self.systems:
-            systemType.update(self.entityManager, self.eventManager, dt)
+        if systemType in self.systems.keys():
+            self.systems[systemType].update(self.entityManager, self.eventManager, dt)
 
     def updateAll(self, dt):
-        for system in self.systems:
-            self.updateSystem(system, dt)
+        for systemType in self.systems.keys():
+            self.updateSystem(systemType, dt)
 
