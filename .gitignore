@@ -4,6 +4,7 @@
 # Python cache
 *.pyc
 __pycache__
+venv
 
 
 
