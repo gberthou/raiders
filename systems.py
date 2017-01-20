@@ -2,8 +2,6 @@ import ecs
 import components
 from sfml import sf
 
-TILE_SIZE = 32
-
 class DrawFighter(ecs.System):
     def __init__(self, window):
         self.window = window
@@ -12,7 +10,7 @@ class DrawFighter(ecs.System):
         for e in entityManager.getEntitiesWithComponents([components.DrawableFighter, components.Position, components.Fighter]):
             pos = e.component(components.Position)
 
-            rect = sf.RectangleShape((TILE_SIZE, TILE_SIZE))
+            rect = e.component(components.DrawableFighter).surface
             rect.position = (pos.x, pos.y)
             self.window.draw(rect)
 
