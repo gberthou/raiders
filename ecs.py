@@ -3,19 +3,19 @@ class Entity:
         self.components = {}
 
     def addComponent(self, component):
-        self.components[type(component).__name__] = component
+        self.components[type(component)] = component
 
     def removeComponent(self, componentType):
         try:
-            del self.components[componentType.__name__]
+            del self.components[componentType]
         except:
             pass
 
     def component(self, componentType):
-        return self.components[componentType.__name__]
+        return self.components[componentType]
     
     def hasComponent(self, componentType):
-        return componentType.__name__ in self.components.keys()
+        return componentType in self.components.keys()
 
 class System:
     @staticmethod

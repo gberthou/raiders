@@ -1,4 +1,5 @@
 import ecs
+import components
 from sfml import sf
 
 window = sf.RenderWindow(sf.VideoMode(800, 600), "Raiders")

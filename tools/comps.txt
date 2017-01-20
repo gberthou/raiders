@@ -1,8 +1,8 @@
 Pathfinding,target
-Weapon,atk,atk_speed,atk_range
-Armor,defense,slow_factor
+Weapon,atk,atkSpeed,atkRange
+Armor,defense,slowFactor
 Vulnerable,hpmax,currenthp
-Fighter,team,mov_speed,fov,mov_range
+Fighter,team,movSpeed,fov,movRange
 PhysicalObject,size
 Door,tile0,tile1,isOpen
 DrawableMap,surface

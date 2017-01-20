@@ -2,7 +2,6 @@
 
 import sys, re
 
-
 if len(sys.argv) < 0:
     print("fuck")
     exit(1)
@@ -20,8 +19,8 @@ for line in input_file:
     if len(comps) < 2:
         continue
 
-    output += "def %s(Component):\n" % comps[0]
-    output += "%sdef __init__(%s):\n" % (" "*4, ",".join(comps[1:]))
+    output += "class %s(ecs.Component):\n" % comps[0]
+    output += "%sdef __init__(self, %s):\n" % (" "*4, ",".join(comps[1:]))
 
     for comp in comps[1:]:
         output += "%sself.%s = %s\n" % (" "*8, comp, comp)

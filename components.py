@@ -2,65 +2,65 @@
 
 import ecs
 
-def Pathfinding(Component):
-    def __init__(target):
+class Pathfinding(ecs.Component):
+    def __init__(self, target):
         self.target = target
 
-def Weapon(Component):
-    def __init__(atk,atk_speed,atk_range):
+class Weapon(ecs.Component):
+    def __init__(self, atk,atkSpeed,atkRange):
         self.atk = atk
-        self.atk_speed = atk_speed
-        self.atk_range = atk_range
+        self.atkSpeed = atkSpeed
+        self.atkRange = atkRange
 
-def Armor(Component):
-    def __init__(defense,slow_factor):
+class Armor(ecs.Component):
+    def __init__(self, defense,slowFactor):
         self.defense = defense
-        self.slow_factor = slow_factor
+        self.slowFactor = slowFactor
 
-def Vulnerable(Component):
-    def __init__(hpmax,currenthp):
+class Vulnerable(ecs.Component):
+    def __init__(self, hpmax,currenthp):
         self.hpmax = hpmax
         self.currenthp = currenthp
 
-def Fighter(Component):
-    def __init__(team,mov_speed,fov,mov_range):
+class Fighter(ecs.Component):
+    def __init__(self, team,movSpeed,fov,movRange):
         self.team = team
-        self.mov_speed = mov_speed
+        self.movSpeed = movSpeed
         self.fov = fov
-        self.mov_range = mov_range
+        self.movRange = movRange
 
-def PhysicalObject(Component):
-    def __init__(size):
+class PhysicalObject(ecs.Component):
+    def __init__(self, size):
         self.size = size
 
-def Door(Component):
-    def __init__(tile0,tile1,isOpen):
+class Door(ecs.Component):
+    def __init__(self, tile0,tile1,isOpen):
         self.tile0 = tile0
         self.tile1 = tile1
         self.isOpen = isOpen
 
-def DrawableMap(Component):
-    def __init__(surface):
+class DrawableMap(ecs.Component):
+    def __init__(self, surface):
         self.surface = surface
 
-def DrawableObject(Component):
-    def __init__(surface):
+class DrawableObject(ecs.Component):
+    def __init__(self, surface):
         self.surface = surface
 
-def DrawableFighter(Component):
-    def __init__(surface):
+class DrawableFighter(ecs.Component):
+    def __init__(self, surface):
         self.surface = surface
 
-def DrawableTop(Component):
-    def __init__(surface):
+class DrawableTop(ecs.Component):
+    def __init__(self, surface):
         self.surface = surface
 
-def DrawableHUD(Component):
-    def __init__(surface):
+class DrawableHUD(ecs.Component):
+    def __init__(self, surface):
         self.surface = surface
 
-def Position(Component):
-    def __init__(x,y):
+class Position(ecs.Component):
+    def __init__(self, x,y):
         self.x = x
         self.y = y
 
