@@ -1,9 +1,22 @@
 import ecs
 import components
+import systems
+
 from sfml import sf
 
-window = sf.RenderWindow(sf.VideoMode(800, 600), "Raiders")
+window = sf.RenderWindow(sf.VideoMode(800, 800), "Raiders")
 window.vertical_synchronization = True
+
+entityManager = ecs.EntityManager()
+eventManager  = ecs.EventManager()
+app = ecs.ECSApp(entityManager, eventManager)
+
+app.addSystem(systems.DrawFighter(window))
+
+pelo = entityManager.createEntity()
+pelo.addComponent(components.Position(100, 100))
+pelo.addComponent(components.Fighter(0, 0, 0, 0))
+pelo.addComponent(components.DrawableFighter(0))
 
 while window.is_open:
     for event in window.events:
@@ -11,32 +24,6 @@ while window.is_open:
             window.close()
 
     window.clear(sf.Color(0, 255, 0))
+    app.updateAll(0)
     window.display()
-
-"""
-class MyComponent:
-    def __init__(self, t = 0):
-        self.t = t
-
-class MySystem(ecs.System):
-    @staticmethod
-    def update(entityManager, eventManager, dt):
-        for entity in entityManager.getEntitiesWithComponents([MyComponent]):
-            entity.component(MyComponent).t += dt
-            print("New t:", entity.component(MyComponent).t)
-
-entityManager = ecs.EntityManager()
-eventManager  = ecs.EventManager()
-app = ecs.ECSApp(entityManager, eventManager)
-
-app.addSystem(MySystem)
-
-myEntityWithComp    = entityManager.createEntity()
-myEntityWithoutComp = entityManager.createEntity()
-
-myEntityWithComp.addComponent(MyComponent(0))
-
-for i in range(10):
-    app.updateAll(28)
-"""
 
