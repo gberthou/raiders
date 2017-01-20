@@ -20,7 +20,7 @@ for line in input_file:
         continue
 
     output += "class %s(ecs.Component):\n" % comps[0]
-    output += "%sdef __init__(self, %s):\n" % (" "*4, ",".join(comps[1:]))
+    output += "%sdef __init__(self, %s):\n" % (" "*4, ", ".join(comps[1:]))
 
     for comp in comps[1:]:
         output += "%sself.%s = %s\n" % (" "*8, comp, comp)
