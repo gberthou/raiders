@@ -1,3 +1,5 @@
+# swp files
+*.swp
 
 # Python cache
 *.pyc

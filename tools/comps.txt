@@ -1,0 +1,13 @@
+Pathfinding,target
+Weapon,atk,atk_speed,atk_range
+Armor,defense,slow_factor
+Vulnerable,hpmax,currenthp
+Fighter,team,mov_speed,fov,mov_range
+PhysicalObject,size
+Door,tile0,tile1,isOpen
+DrawableMap,surface
+DrawableObject,surface
+DrawableFighter,surface
+DrawableTop,surface
+DrawableHUD,surface
+Position,x,y
