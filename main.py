@@ -1,13 +1,13 @@
 import ecs
 import components
 import systems
+import constants as cst
 
 from sfml import sf
 
 if __name__ == "__main__":
-    TILE_SIZE = 32
 
-    window = sf.RenderWindow(sf.VideoMode(600, 600), "Raiders")
+    window = sf.RenderWindow(sf.VideoMode(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT), "Raiders")
     window.vertical_synchronization = True
     window.framerate_limit = 60
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     pelo = entityManager.createEntity()
     pelo.addComponent(components.Position(100, 100))
     pelo.addComponent(components.Fighter(0, 0, 0, 0))
-    pelo.addComponent(components.DrawableFighter(sf.RectangleShape((TILE_SIZE, TILE_SIZE))))
+    pelo.addComponent(components.DrawableFighter(sf.RectangleShape((cst.TILE_SIZE, cst.TILE_SIZE))))
 
     clock = sf.Clock()
 
