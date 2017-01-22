@@ -19,6 +19,11 @@ if __name__ == "__main__":
     window = sf.RenderWindow(sf.VideoMode(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT), "Raiders")
     window.vertical_synchronization = True
     window.framerate_limit = 60
+    
+    view = sf.View()
+    view.center = (300, 300)
+    view.size = (600, 600)
+    window.view = view
 
     entityManager = ecs.EntityManager()
     eventManager  = ecs.EventManager()
