@@ -13,3 +13,4 @@ DrawableFighter,surface
 DrawableTop,surface
 DrawableHUD,surface
 Position,x,y
+Selected

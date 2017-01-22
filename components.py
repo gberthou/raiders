@@ -71,3 +71,7 @@ class Position(ecs.Component):
         self.x = x
         self.y = y
 
+class Selected(ecs.Component):
+    def __init__(self):
+        pass
+

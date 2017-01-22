@@ -16,12 +16,17 @@ with open(input_fname, "r") as f:
 
 for line in input_file:
     comps = re.sub(r"[ \n]", "", line).split(",")
-    if len(comps) < 2:
+    if len(comps) < 1:
         continue
 
     output += "class %s(ecs.Component):\n" % comps[0]
-    output += "%sdef __init__(self, %s):\n" % (" "*4, ", ".join(comps[1:]))
+    output += "%sdef __init__(self" % (" "*4)
+    if len(comps) > 1:
+        output += ", %s" % (", ".join(comps[1:]))
+    output += "):\n"
 
+    if len(comps) <= 1:
+        output += "%spass\n" % (" "*8)
     for comp in comps[1:]:
         output += "%sself.%s = %s\n" % (" "*8, comp, comp)
 
