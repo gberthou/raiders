@@ -21,8 +21,8 @@ if __name__ == "__main__":
     window.framerate_limit = 60
     
     view = sf.View()
-    view.center = (300, 300)
-    view.size = (600, 600)
+    view.center = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
+    view.size = (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     window.view = view
 
     entityManager = ecs.EntityManager()
