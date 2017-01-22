@@ -1,0 +1,10 @@
+
+TILE_SIZE = 32
+WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 600
+
+
+
+
+
+

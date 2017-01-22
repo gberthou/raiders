@@ -1,22 +1,21 @@
 import ecs
 import components
 import systems
+import constants as cst
 
 from sfml import sf
-
-TILE_SIZE = 32
 
 def fighterAt(entityManager, x, y):
     entities = entityManager.getEntitiesWithComponents([components.Position, components.Fighter])
     for e in entities:
         pos = e.component(components.Position)
         print(pos.x, pos.y, x, y)
-        if x >= pos.x and x < pos.x + TILE_SIZE and y >= pos.y and y < pos.y + TILE_SIZE:
+        if x >= pos.x and x < pos.x + cst.TILE_SIZE and y >= pos.y and y < pos.y + cst.TILE_SIZE:
             return e
     return None
 
 if __name__ == "__main__":
-    window = sf.RenderWindow(sf.VideoMode(600, 600), "Raiders")
+    window = sf.RenderWindow(sf.VideoMode(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT), "Raiders")
     window.vertical_synchronization = True
     window.framerate_limit = 60
 
@@ -29,7 +28,7 @@ if __name__ == "__main__":
     pelo = entityManager.createEntity()
     pelo.addComponent(components.Position(16, 16))
     pelo.addComponent(components.Fighter(0, 0, 0, 0))
-    pelo.addComponent(components.DrawableFighter(sf.RectangleShape((TILE_SIZE, TILE_SIZE))))
+    pelo.addComponent(components.DrawableFighter(sf.RectangleShape((cst.TILE_SIZE, cst.TILE_SIZE))))
 
     clock = sf.Clock()
 
