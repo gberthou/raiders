@@ -4,7 +4,7 @@ Path,path
 Weapon,atk,atkSpeed,atkRange
 Armor,defense,slowFactor
 Vulnerable,hpmax,currenthp
-Fighter,team,movSpeed,fov,movRange
+Fighter,team,movSpeed,fov
 PhysicalObject,size
 Door,tile0,tile1,isOpen
 DrawableMap,surface

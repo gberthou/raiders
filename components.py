@@ -31,11 +31,10 @@ class Vulnerable(ecs.Component):
         self.currenthp = currenthp
 
 class Fighter(ecs.Component):
-    def __init__(self, team, movSpeed, fov, movRange):
+    def __init__(self, team, movSpeed, fov):
         self.team = team
         self.movSpeed = movSpeed
         self.fov = fov
-        self.movRange = movRange
 
 class PhysicalObject(ecs.Component):
     def __init__(self, size):
