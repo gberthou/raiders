@@ -2,9 +2,17 @@
 
 import ecs
 
-class Pathfinding(ecs.Component):
+class MovementTarget(ecs.Component):
     def __init__(self, target):
         self.target = target
+
+class AttackTarget(ecs.Component):
+    def __init__(self, target):
+        self.target = target
+
+class Path(ecs.Component):
+    def __init__(self, path):
+        self.path = path
 
 class Weapon(ecs.Component):
     def __init__(self, atk, atkSpeed, atkRange):

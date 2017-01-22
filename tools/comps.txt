@@ -1,4 +1,6 @@
-Pathfinding,target
+MovementTarget,target
+AttackTarget,target
+Path,path
 Weapon,atk,atkSpeed,atkRange
 Armor,defense,slowFactor
 Vulnerable,hpmax,currenthp
