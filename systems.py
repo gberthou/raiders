@@ -9,7 +9,6 @@ class DrawFighter(ecs.System):
     def update(self, entityManager, eventManager, dt):
         for e in entityManager.getEntitiesWithComponents([components.DrawableFighter, components.Position, components.Fighter]):
             pos = e.component(components.Position)
-
             rect = e.component(components.DrawableFighter).surface
             rect.position = (pos.x, pos.y)
             self.window.draw(rect)
