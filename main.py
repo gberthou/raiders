@@ -1,6 +1,7 @@
 import ecs
 import components
 import systems
+import factory
 import constants as cst
 
 from sfml import sf
@@ -17,10 +18,8 @@ if __name__ == "__main__":
 
     app.addSystem(systems.DrawFighter(window))
 
-    pelo = entityManager.createEntity()
-    pelo.addComponent(components.Position(100, 100))
-    pelo.addComponent(components.Fighter(0, 0, 0, 0))
-    pelo.addComponent(components.DrawableFighter(sf.RectangleShape((cst.TILE_SIZE, cst.TILE_SIZE))))
+    facto = factory.Factory(entityManager)
+    pelo = facto.createDefaultFighter()
 
     clock = sf.Clock()
 
