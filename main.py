@@ -1,5 +1,5 @@
 import ecs
-import components
+import components as comp
 import systems
 import factory
 import constants as cst
@@ -17,24 +17,24 @@ if __name__ == "__main__":
     view.size = (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     window.view = view
 
-    entityManager = ecs.EntityManager()
+    em = ecs.EntityManager()
     eventManager  = ecs.EventManager()
-    app = ecs.ECSApp(entityManager, eventManager)
+    app = ecs.ECSApp(em, eventManager)
 
-    game = game.Game(entityManager)
+    game = game.Game(em)
 
     app.addSystem(systems.DrawFighter(window))
-    app.addSystem(systems.Teleportation())
     app.addSystem(systems.DrawHealthBar(window))
+    app.addSystem(systems.Teleportation())
     app.addSystem(systems.PlayerAttack())
 
-    facto = factory.Factory(entityManager)
+    facto = factory.Factory(em)
     pelo = facto.createDefaultFighter()
 
     foe = facto.createDefaultFighter()
-    foe.component(components.Position).x = 300
-    foe.component(components.Fighter).team = 28
-    foe.addComponent(components.DrawableHUD(None))
+    foe.component(comp.Position).x = 300
+    foe.component(comp.Fighter).team = 28
+    foe.addComponent(comp.DrawableHUD(None))
 
     clock = sf.Clock()
 

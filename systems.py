@@ -1,5 +1,5 @@
 import ecs
-import components
+import components as comp
 import constants as cst
 import game
 
@@ -9,10 +9,10 @@ class DrawFighter(ecs.System):
     def __init__(self, window):
         self.window = window
 
-    def update(self, entityManager, eventManager, dt):
-        for e in entityManager.getEntitiesWithComponents([components.DrawableFighter, components.Position, components.Fighter]):
-            pos = e.component(components.Position)
-            rect = e.component(components.DrawableFighter).surface
+    def update(self, em, eventManager, dt):
+        for e in em.getEntitiesWithComponents([comp.DrawableFighter, comp.Position, comp.Fighter]):
+            pos = e.component(comp.Position)
+            rect = e.component(comp.DrawableFighter).surface
             rect.position = (pos.x, pos.y)
             self.window.draw(rect)
 
@@ -20,49 +20,49 @@ class DrawHealthBar(ecs.System):
     def __init__(self, window):
         self.window = window
 
-    def update(self, entityManager, eventManager, dt):
-        for e in entityManager.getEntitiesWithComponents([components.DrawableHUD, components.Position, components.Vulnerable]):
-            hpratio = e.component(components.Vulnerable).currenthp / e.component(components.Vulnerable).hpmax
+    def update(self, em, eventManager, dt):
+        for e in em.getEntitiesWithComponents([comp.DrawableHUD, comp.Position, comp.Vulnerable]):
+            hpratio = e.component(comp.Vulnerable).currenthp / e.component(comp.Vulnerable).hpmax
             # TODO: Draw hp bar
 
 class Teleportation(ecs.System):
     def __init__(self):
         pass
 
-    def update(self, entityManager, eventManager, dt):
-        for e in entityManager.getEntitiesWithComponents([components.Position, components.MovementTarget]):
-            pos = e.component(components.Position)
-            targetTile = e.component(components.MovementTarget).target
+    def update(self, em, eventManager, dt):
+        for e in em.getEntitiesWithComponents([comp.Position, comp.MovementTarget]):
+            pos = e.component(comp.Position)
+            targetTile = e.component(comp.MovementTarget).target
 
             pos.x, pos.y = targetTile[0] * cst.TILE_SIZE, targetTile[1] * cst.TILE_SIZE
 
-            e.removeComponent(components.MovementTarget)
-            e.removeComponent(components.Selected)
+            e.removeComponent(comp.MovementTarget)
+            e.removeComponent(comp.Selected)
 
 class PlayerAttack(ecs.System):
     def __init__(self):
         pass
 
-    def update(self, entityManager, eventManager, dt):
-        for e in entityManager.getEntitiesWithComponents([components.Fighter, components.Selected, components.Weapon, components.AttackTarget]):
+    def update(self, em, eventManager, dt):
+        for e in em.getEntitiesWithComponents([comp.Fighter, comp.Selected, comp.Weapon, comp.AttackTarget]):
             # TODO in a support method:
             # if not in range > warn player
             # if no weapon > warn player
             # if ally > warn player
-            foe = e.component(components.AttackTarget).target
+            foe = e.component(comp.AttackTarget).target
             effectiveDmg = self.effectiveDmg(e, foe)
-            foe.component(components.Vulnerable).currenthp -= effectiveDmg if effectiveDmg > 0 else 0
+            foe.component(comp.Vulnerable).currenthp -= effectiveDmg if effectiveDmg > 0 else 0
             # TODO: Properly handle attack speed
-            print("%d" % foe.component(components.Vulnerable).currenthp)
+            print("%d" % foe.component(comp.Vulnerable).currenthp)
 
             # TODO: Don't forget to remove AttackTarget once another valid order has been issued
-            e.removeComponent(components.AttackTarget)
-            e.removeComponent(components.Selected)
+            e.removeComponent(comp.AttackTarget)
+            e.removeComponent(comp.Selected)
 
     # TODO extract in support method
     def effectiveDmg(self, friend, foe):
-        armor = foe.component(components.Armor).defense if foe.hasComponent(components.Armor) else 0
-        effectiveDmg = friend.component(components.Weapon).atk * (1 - armor)
+        armor = foe.component(comp.Armor).defense if foe.hasComponent(comp.Armor) else 0
+        effectiveDmg = friend.component(comp.Weapon).atk * (1 - armor)
         return effectiveDmg
 
 # TODO: Another attack for NPCs ? = non selected
