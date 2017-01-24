@@ -7,8 +7,9 @@ class MovementTarget(ecs.Component):
         self.target = target
 
 class AttackTarget(ecs.Component):
-    def __init__(self, target):
+    def __init__(self, target, dt):
         self.target = target
+        self.dt = dt
 
 class Path(ecs.Component):
     def __init__(self, path):
@@ -26,9 +27,10 @@ class Armor(ecs.Component):
         self.slowFactor = slowFactor
 
 class Vulnerable(ecs.Component):
-    def __init__(self, hpmax, currenthp):
+    def __init__(self, hpmax, currenthp, visibility):
         self.hpmax = hpmax
         self.currenthp = currenthp
+        self.visibility = visibility
 
 class Fighter(ecs.Component):
     def __init__(self, team, movSpeed, fov):

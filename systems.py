@@ -22,12 +22,39 @@ class DrawHealthBar(ecs.System):
 
     def update(self, em, eventManager, dt):
         for e in em.getEntitiesWithComponents([comp.DrawableHUD, comp.Position, comp.Vulnerable]):
+            if e.component(comp.Vulnerable).visibility == cst.BarVisibility.HIDDEN:
+                continue
+
+            # TODO: can divide by 0, handle with care
             hpratio = e.component(comp.Vulnerable).currenthp / e.component(comp.Vulnerable).hpmax
-            # TODO: Draw hp bar
+            if e.component(comp.Vulnerable).visibility == cst.BarVisibility.DAMAGED and hpratio == 1:
+                continue
+
+            # Draw hp bar
+            x, y = e.component(comp.Position).x, e.component(comp.Position).y
+            bar_position = (x + cst.BAR_X, y + cst.TILE_SIZE + cst.BAR_Y)
+
+            redbar = sf.RectangleShape()
+            redbar.position = bar_position
+            redbar.size = (cst.BAR_WIDTH, cst.BAR_HEIGHT)
+            redbar.fill_color = sf.Color.RED
+            redbar.outline_thickness = 1
+            redbar.outline_color = sf.Color.BLACK
+
+            self.window.draw(redbar)
+
+            if hpratio != 0:
+                greenbar = sf.RectangleShape()
+                greenbar.position = bar_position
+                greenbar.size = (int(hpratio * cst.BAR_WIDTH), cst.BAR_HEIGHT)
+                greenbar.fill_color = sf.Color.GREEN
+
+                self.window.draw(greenbar)
+
 
 class Teleportation(ecs.System):
     def __init__(self):
-        pass
+            pass
 
     def update(self, em, eventManager, dt):
         for e in em.getEntitiesWithComponents([comp.Position, comp.MovementTarget]):
@@ -51,7 +78,8 @@ class PlayerAttack(ecs.System):
             # if ally > warn player
             foe = e.component(comp.AttackTarget).target
             effectiveDmg = self.effectiveDmg(e, foe)
-            foe.component(comp.Vulnerable).currenthp -= effectiveDmg if effectiveDmg > 0 else 0
+            diff = foe.component(comp.Vulnerable).currenthp - effectiveDmg
+            foe.component(comp.Vulnerable).currenthp = diff if diff > 0 else 0
             # TODO: Properly handle attack speed
             print("%d" % foe.component(comp.Vulnerable).currenthp)
 

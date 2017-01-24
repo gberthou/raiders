@@ -1,9 +1,9 @@
 MovementTarget,target
-AttackTarget,target
+AttackTarget,target,dt
 Path,path
 Weapon,atk,atkSpeed,atkRange
 Armor,defense,slowFactor
-Vulnerable,hpmax,currenthp
+Vulnerable,hpmax,currenthp,visibility
 Fighter,team,movSpeed,fov
 PhysicalObject,size
 Door,tile0,tile1,isOpen

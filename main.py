@@ -34,7 +34,7 @@ if __name__ == "__main__":
     foe = facto.createDefaultFighter()
     foe.component(comp.Position).x = 300
     foe.component(comp.Fighter).team = 28
-    foe.addComponent(comp.DrawableHUD(None))
+    foe.component(comp.Vulnerable).currenthp = 75
 
     clock = sf.Clock()
 
