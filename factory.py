@@ -13,9 +13,11 @@ class Factory:
         fighter = self._entityManager.createEntity()
         fighter.addComponent(comps.Position(0, 0))
         fighter.addComponent(comps.Fighter(0, 1, 1))
-        fighter.addComponent(comps.Armor(0, 0))
-        fighter.addComponent(comps.Weapon(1, 1, 1))
+        fighter.addComponent(comps.Armor(0.5, 0))
+        fighter.addComponent(comps.Weapon(30, 1, 1))
+        fighter.addComponent(comps.Vulnerable(100, 100))
         fighter.addComponent(comps.DrawableFighter(sf.RectangleShape((cst.TILE_SIZE, cst.TILE_SIZE))))
+        # HP bar
         return fighter
 
 

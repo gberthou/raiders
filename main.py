@@ -11,7 +11,7 @@ if __name__ == "__main__":
     window = sf.RenderWindow(sf.VideoMode(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT), "Raiders")
     window.vertical_synchronization = True
     window.framerate_limit = 60
-    
+
     view = sf.View()
     view.center = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
     view.size = (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
@@ -25,9 +25,16 @@ if __name__ == "__main__":
 
     app.addSystem(systems.DrawFighter(window))
     app.addSystem(systems.Teleportation())
+    app.addSystem(systems.DrawHealthBar(window))
+    app.addSystem(systems.PlayerAttack())
 
     facto = factory.Factory(entityManager)
     pelo = facto.createDefaultFighter()
+
+    foe = facto.createDefaultFighter()
+    foe.component(components.Position).x = 300
+    foe.component(components.Fighter).team = 28
+    foe.addComponent(components.DrawableHUD(None))
 
     clock = sf.Clock()
 
@@ -39,7 +46,7 @@ if __name__ == "__main__":
                 if event.button == sf.Mouse.LEFT:
                     fighter = game.fighterAt(event.position.x, event.position.y)
                     if fighter != None:
-                       game.selectFighter(fighter)
+                        game.selectFighter(fighter)
                     else: # No fighter underneath mouse cursor
                         game.unselectFighters()
                 elif event.button == sf.Mouse.RIGHT:
