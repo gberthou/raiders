@@ -70,8 +70,7 @@ def dijkstra(area, start, goal):
     prev = dict()
 
     while len(Q):
-        minDist = min([dist[i] for i in dist.keys() if i in Q])
-        minDistPoint = [i for i in dist.keys() if i in Q and dist[i] == minDist][0]
+        _, minDistPoint = min([(dist[i], i) for i in dist.keys() if i in Q])
 
         if minDistPoint == goal: # Mathematical proof of correctness?
             break
