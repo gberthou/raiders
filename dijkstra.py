@@ -43,14 +43,18 @@ class RectangleSet:
     def findPath(self):
         prev = dict()
 
-        while len(self.Q):
+        for i in range(self.w * self.h):
             d, minDistPoint = self.minDistActive()
+
+            if minDistPoint == goal: # Mathematical proof of correctness?
+                break
+
             self.remove(minDistPoint)
 
             for neighbor in neighborsOf(minDistPoint):
                 if not self.isActive(neighbor):
                     continue
-                alt = d + 1
+                alt = d + 1 + distance(neighbor, goal) # A* like
                 if self.isShorterThan(neighbor, alt):
                     self.setDist(neighbor, alt)
                     prev[neighbor] = minDistPoint
@@ -66,20 +70,20 @@ def dijkstra(area, start, goal):
     startX, startY = start
     goalX, goalY   = goal
     dist = {(startX, startY) : 0}
-    Q = {(x,y) for x in range(x0, x1+1) for y in range(y0, y1+1)}
+    nQ = set()
     prev = dict()
 
-    while len(Q):
-        _, minDistPoint = min([(dist[i], i) for i in dist.keys() if i in Q])
+    for i in range((x1-x0+1) * (y1-y0+1)):
+        d, minDistPoint = min([(j, i) for i, j in dist.items() if not i in nQ])
 
         if minDistPoint == goal: # Mathematical proof of correctness?
             break
 
-        Q.remove(minDistPoint)
+        nQ.add(minDistPoint)
+        del dist[minDistPoint]
 
-        d = dist[minDistPoint]
         for neighbor in neighborsOf(minDistPoint):
-            if not neighbor in Q:
+            if neighbor in nQ:
                 continue
             alt = d + 1 + distance(neighbor, goal) # A* like
             if not neighbor in dist.keys() or alt < dist[neighbor]:
@@ -114,9 +118,18 @@ def searchPath(area, start, goal):
 
 
 ### Test here
-area  = (0, 0, 100, 100)
-start = (10, 10)
-goal  = (50, 50)
+if __name__ == "__main__":
+    import time
+    area  = (0, 0, 70, 70)
+    start = (10, 10)
+    goal  = (40, 60)
 
-print(searchPath(area, start, goal))
+    t = []
+    N = 10
+    for i in range(N): 
+        a = time.time()
+        tmp = searchPath(area, start, goal)
+        t.append(time.time() - a)
+
+    print(sum(t) / N)
 
