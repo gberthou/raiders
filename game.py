@@ -39,7 +39,8 @@ class Game:
             if foe == None:
                 selected.addComponent(comp.MovementTarget((tileX, tileY)))
             elif self.areFoes(selected, foe):
-                selected.addComponent(comp.AttackTarget(foe, 0))
+                if not selected.hasComponent(comp.AttackTarget) or selected.component(comp.AttackTarget).target != foe:
+                    selected.addComponent(comp.AttackTarget(foe, 1/selected.component(comp.Weapon).atkSpeed))
             # else <Friendly unit at (x,y)> : do nothing
 
 
