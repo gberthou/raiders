@@ -1,5 +1,6 @@
 import components as comp
 import constants as cst
+import utils
 
 class Game:
     def __init__(self, em):
@@ -22,11 +23,6 @@ class Game:
         self.unselectFighters()
         fighter.addComponent(comp.Selected())
 
-    @staticmethod
-    def areFoes(fighterA, fighterB):
-        # TODO: Manage neutral/friendly factions
-        return fighterA.component(comp.Fighter).team != fighterB.component(comp.Fighter).team
-
     def assignTargetToSelected(self, x, y):
         foe = self.fighterAt(x, y)
 
@@ -38,7 +34,7 @@ class Game:
             selected = selected[0]
             if foe == None:
                 selected.addComponent(comp.MovementTarget((tileX, tileY)))
-            elif self.areFoes(selected, foe):
+            elif utils.areFoes(selected, foe):
                 selected.addComponent(comp.AttackTarget(foe, 0))
             # else <Friendly unit at (x,y)> : do nothing
 

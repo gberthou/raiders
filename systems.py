@@ -2,6 +2,7 @@ import ecs
 import components as comp
 import constants as cst
 import game
+import utils
 
 from sfml import sf
 
@@ -90,7 +91,7 @@ class PlayerAttack(ecs.System):
             target = e.component(comp.AttackTarget)
             foe = target.target
 
-            if not self.inRange(e, foe) or foe.component(comp.Vulnerable).currenthp == 0:
+            if not utils.inWeaponRange(e, foe) or foe.component(comp.Vulnerable).currenthp == 0:
                 e.removeComponent(comp.AttackTarget)
                 return
 
@@ -100,25 +101,9 @@ class PlayerAttack(ecs.System):
                 target.dt = cur_dt
                 return
 
-            effectiveDmg = self.effectiveDmg(e, foe)
+            effectiveDmg = utils.effectiveDmg(e, foe)
             diff = foe.component(comp.Vulnerable).currenthp - effectiveDmg
             foe.component(comp.Vulnerable).currenthp = diff if diff > 0 else 0
             target.dt = cur_dt - (1/atkSpeed)
-
-    # TODO extract in support methods
-
-    def effectiveDmg(self, friend, foe):
-        armor = foe.component(comp.Armor).defense if foe.hasComponent(comp.Armor) else 0
-        effectiveDmg = friend.component(comp.Weapon).atk * (1 - armor)
-        return effectiveDmg
-
-    def inRange(self, friend, foe):
-        # TODO make it more intelligent
-        friend_pos = friend.component(comp.Position)
-        foe_pos = foe.component(comp.Position)
-        xdiff = abs(friend_pos.x - foe_pos.x)
-        ydiff = abs(friend_pos.y - foe_pos.y)
-        return xdiff**2 + ydiff**2 <= friend.component(comp.Weapon).atkRange**2
-
 
 
