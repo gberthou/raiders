@@ -25,6 +25,7 @@ if __name__ == "__main__":
 
     app.addSystem(systems.DrawFighter(window))
     app.addSystem(systems.DrawHealthBar(window))
+    app.addSystem(systems.DrawWeaponRange(window))
     app.addSystem(systems.Teleportation())
     app.addSystem(systems.PlayerAttack())
 

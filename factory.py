@@ -14,7 +14,7 @@ class Factory:
         fighter.addComponent(comp.Position(100,100))
         fighter.addComponent(comp.Fighter(0, 1, 1))
         fighter.addComponent(comp.Armor(0.5, 0))
-        fighter.addComponent(comp.Weapon(30, 1, 1))
+        fighter.addComponent(comp.Weapon(30, 1, 300))
         fighter.addComponent(comp.Vulnerable(100, 100, cst.BarVisibility.VISIBLE))
         fighter.addComponent(comp.DrawableFighter(sf.RectangleShape((cst.TILE_SIZE, cst.TILE_SIZE))))
         fighter.addComponent(comp.DrawableHUD(None))

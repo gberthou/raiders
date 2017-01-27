@@ -51,6 +51,21 @@ class DrawHealthBar(ecs.System):
 
                 self.window.draw(greenbar)
 
+class DrawWeaponRange(ecs.System):
+    def __init__(self, window):
+        self.window = window
+
+    def update(self, em, eventManager, dt):
+        for e in em.getEntitiesWithComponents([comp.DrawableHUD, comp.Position, comp.Fighter, comp.Weapon, comp.Selected]):
+            pos = e.component(comp.Position)
+            rangeCircle = sf.CircleShape()
+            rangeCircle.radius = e.component(comp.Weapon).atkRange
+            rangeCircle.position = (pos.x + 0.5*cst.TILE_SIZE - rangeCircle.radius, pos.y + 0.5*cst.TILE_SIZE - rangeCircle.radius)
+            rangeCircle.fill_color = sf.Color.TRANSPARENT
+            rangeCircle.outline_thickness = 1
+            rangeCircle.outline_color = sf.Color(0, 0, 0, 128)
+
+            self.window.draw(rangeCircle)
 
 class Teleportation(ecs.System):
     def __init__(self):
@@ -71,27 +86,39 @@ class PlayerAttack(ecs.System):
         pass
 
     def update(self, em, eventManager, dt):
-        for e in em.getEntitiesWithComponents([comp.Fighter, comp.Selected, comp.Weapon, comp.AttackTarget]):
-            # TODO in a support method:
-            # if not in range > warn player
-            # if no weapon > warn player
-            # if ally > warn player
-            foe = e.component(comp.AttackTarget).target
+        for e in em.getEntitiesWithComponents([comp.Fighter, comp.Weapon, comp.AttackTarget]):
+            target = e.component(comp.AttackTarget)
+            foe = target.target
+
+            if not self.inRange(e, foe) or foe.component(comp.Vulnerable).currenthp == 0:
+                e.removeComponent(comp.AttackTarget)
+                return
+
+            cur_dt = target.dt + dt
+            atkSpeed = e.component(comp.Weapon).atkSpeed
+            if cur_dt < 1/atkSpeed:
+                target.dt = cur_dt
+                return
+
             effectiveDmg = self.effectiveDmg(e, foe)
             diff = foe.component(comp.Vulnerable).currenthp - effectiveDmg
             foe.component(comp.Vulnerable).currenthp = diff if diff > 0 else 0
-            # TODO: Properly handle attack speed
-            print("%d" % foe.component(comp.Vulnerable).currenthp)
+            target.dt = cur_dt - (1/atkSpeed)
 
-            # TODO: Don't forget to remove AttackTarget once another valid order has been issued
-            e.removeComponent(comp.AttackTarget)
-            e.removeComponent(comp.Selected)
+    # TODO extract in support methods
 
-    # TODO extract in support method
     def effectiveDmg(self, friend, foe):
         armor = foe.component(comp.Armor).defense if foe.hasComponent(comp.Armor) else 0
         effectiveDmg = friend.component(comp.Weapon).atk * (1 - armor)
         return effectiveDmg
 
-# TODO: Another attack for NPCs ? = non selected
+    def inRange(self, friend, foe):
+        # TODO make it more intelligent
+        friend_pos = friend.component(comp.Position)
+        foe_pos = foe.component(comp.Position)
+        xdiff = abs(friend_pos.x - foe_pos.x)
+        ydiff = abs(friend_pos.y - foe_pos.y)
+        return xdiff**2 + ydiff**2 <= friend.component(comp.Weapon).atkRange**2
+
+
 
