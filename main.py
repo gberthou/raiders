@@ -3,7 +3,7 @@ import components as comp
 import systems
 import factory
 import constants as cst
-import game
+import raidersem
 
 from sfml import sf
 
@@ -17,11 +17,9 @@ if __name__ == "__main__":
     view.size = (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     window.view = view
 
-    em = ecs.EntityManager()
+    em = ecs.RaidersEntityManager()
     eventManager  = ecs.EventManager()
     app = ecs.ECSApp(em, eventManager)
-
-    game = game.Game(em)
 
     app.addSystem(systems.DrawFighter(window))
     app.addSystem(systems.DrawHealthBar(window))
@@ -45,13 +43,13 @@ if __name__ == "__main__":
                 window.close()
             elif type(event) is sf.MouseButtonEvent:
                 if event.button == sf.Mouse.LEFT:
-                    fighter = game.fighterAt(event.position.x, event.position.y)
+                    fighter = em.fighterAt(event.position.x, event.position.y)
                     if fighter != None:
-                        game.selectFighter(fighter)
+                        em.selectFighter(fighter)
                     else: # No fighter underneath mouse cursor
-                        game.unselectFighters()
+                        em.unselectFighters()
                 elif event.button == sf.Mouse.RIGHT:
-                    game.assignTargetToSelected(event.position.x, event.position.y)
+                    em.assignTargetToSelected(event.position.x, event.position.y)
 
         dt = clock.elapsed_time.seconds
         clock.restart()

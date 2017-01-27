@@ -95,15 +95,15 @@ class PlayerAttack(ecs.System):
                 e.removeComponent(comp.AttackTarget)
                 return
 
-            cur_dt = target.dt + dt
             atkSpeed = e.component(comp.Weapon).atkSpeed
-            if cur_dt < 1/atkSpeed:
-                target.dt = cur_dt
-                return
 
-            effectiveDmg = utils.effectiveDmg(e, foe)
+            nHits = int(target.dt * atkSpeed)
+
+            effectiveDmg = nHits * utils.effectiveDmg(e, foe)
             diff = foe.component(comp.Vulnerable).currenthp - effectiveDmg
             foe.component(comp.Vulnerable).currenthp = diff if diff > 0 else 0
-            target.dt = cur_dt - (1/atkSpeed)
+
+            target.dt += dt
+            target.dt -= nHits / atkSpeed
 
 
