@@ -1,7 +1,7 @@
 import ecs
+import raidersem
 import components as comp
 import constants as cst
-import game
 import utils
 
 from sfml import sf

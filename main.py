@@ -17,7 +17,7 @@ if __name__ == "__main__":
     view.size = (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     window.view = view
 
-    em = ecs.RaidersEntityManager()
+    em = raidersem.RaidersEntityManager()
     eventManager  = ecs.EventManager()
     app = ecs.ECSApp(em, eventManager)
 
