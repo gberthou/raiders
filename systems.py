@@ -2,9 +2,12 @@ import ecs
 import raidersem
 import components as comp
 import constants as cst
+import dijkstra
 import utils
 
 from sfml import sf
+
+### Graphics ###
 
 class DrawFighter(ecs.System):
     def __init__(self, window):
@@ -68,6 +71,8 @@ class DrawWeaponRange(ecs.System):
 
             self.window.draw(rangeCircle)
 
+### Core ###
+
 class Teleportation(ecs.System):
     def __init__(self):
             pass
@@ -80,6 +85,48 @@ class Teleportation(ecs.System):
             pos.x, pos.y = targetTile[0] * cst.TILE_SIZE, targetTile[1] * cst.TILE_SIZE
 
             e.removeComponent(comp.MovementTarget)
+            e.removeComponent(comp.Selected)
+
+class MovementAI(ecs.System):
+    def __init__(self):
+            pass
+
+    def update(self, em, eventManager, dt):
+        for e in em.getEntitiesWithComponents([comp.Position, comp.MovementTarget, comp.Fighter]):
+            pos = e.component(comp.Position)
+            targetTile = e.component(comp.MovementTarget).target
+            currentTile = utils.world2grid((pos.x, pos.y))
+
+            #if targetTile == currentTile:
+            if utils.norm2(utils.vec2((pos.x, pos.y), utils.grid2world(targetTile))) < 1:
+                e.removeComponent(comp.MovementTarget)
+                e.removeComponent(comp.Path)
+            else:
+                if not e.hasComponent(comp.Path):
+                    area = (pos.x - 30, pos.y - 30, pos.x + 30, pos.y + 30)
+                    p = dijkstra.searchPath(area, currentTile, targetTile)
+                    if p == None: # No path found
+                        e.removeComponent(comp.MovementTarget)
+                        e.removeComponent(comp.Selected)
+                        continue
+                    e.addComponent(comp.Path(p, 0))
+
+                path = e.component(comp.Path)
+                fighter = e.component(comp.Fighter)
+
+                delta = utils.vec2((pos.x, pos.y), utils.grid2world(path.path[path.currentIndex]))
+                if utils.norm2(delta) < 1:
+                    path.currentIndex += 1
+
+                length = utils.norm(delta)
+                if length > fighter.movSpeed * dt:
+                    movement = (delta[0] * fighter.movSpeed * dt / length, delta[1] * fighter.movSpeed * dt / length)
+                else:
+                    movement = (delta[0], delta[1])
+
+                pos.x += movement[0]
+                pos.y += movement[1]
+
             e.removeComponent(comp.Selected)
 
 class PlayerAttack(ecs.System):

@@ -12,8 +12,9 @@ class AttackTarget(ecs.Component):
         self.dt = dt
 
 class Path(ecs.Component):
-    def __init__(self, path):
+    def __init__(self, path, currentIndex):
         self.path = path
+        self.currentIndex = currentIndex
 
 class Weapon(ecs.Component):
     def __init__(self, atk, atkSpeed, atkRange):

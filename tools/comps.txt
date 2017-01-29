@@ -1,6 +1,6 @@
 MovementTarget,target
 AttackTarget,target,dt
-Path,path
+Path,path,currentIndex
 Weapon,atk,atkSpeed,atkRange
 Armor,defense,slowFactor
 Vulnerable,hpmax,currenthp,visibility

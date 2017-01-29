@@ -12,7 +12,7 @@ class Factory:
     def createDefaultFighter(self):
         fighter = self.em.createEntity()
         fighter.addComponent(comp.Position(100,100))
-        fighter.addComponent(comp.Fighter(0, 1, 1))
+        fighter.addComponent(comp.Fighter(0, 64, 1))
         fighter.addComponent(comp.Armor(0.5, 0))
         fighter.addComponent(comp.Weapon(30, 1, 300))
         fighter.addComponent(comp.Vulnerable(100, 100, cst.BarVisibility.VISIBLE))
