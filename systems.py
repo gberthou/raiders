@@ -94,11 +94,12 @@ class MovementAI(ecs.System):
     def update(self, em, eventManager, dt):
         for e in em.getEntitiesWithComponents([comp.Position, comp.MovementTarget, comp.Fighter]):
             pos = e.component(comp.Position)
-            targetTile = e.component(comp.MovementTarget).target
             currentTile = utils.world2grid((pos.x, pos.y))
+            targetTile = e.component(comp.MovementTarget).target
+            targetWorld = utils.grid2world(targetTile)
 
-            #if targetTile == currentTile:
-            if utils.norm2(utils.vec2((pos.x, pos.y), utils.grid2world(targetTile))) < 1:
+            if utils.norm2(utils.vec2((pos.x, pos.y), targetWorld)) < 1:
+                pos.x, pos.y = targetWorld # Align the actual position along the tile
                 e.removeComponent(comp.MovementTarget)
                 e.removeComponent(comp.Path)
             else:
