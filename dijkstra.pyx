@@ -14,7 +14,7 @@ cdef neighborsOf(pos):
     x, y = pos
     return ((x+1, y), (x-1, y), (x, y+1), (x, y-1))
 
-cdef dist_t calcDistance(p0, p1):
+cdef dist_t calcDistance(p0, p1) except *:
     cdef dist_t x0, x1, y0, y1
     x0, y0 = p0
     x1, y1 = p1
@@ -22,7 +22,7 @@ cdef dist_t calcDistance(p0, p1):
 
 # x1 > x0
 # y1 > y0
-cpdef dijkstra(area, start, goal):
+cdef dijkstra(area, start, goal):
     cdef coord_t x0, y0, x1, y1, startX, startY, goalX, goalY
 
     x0, y0, x1, y1 = area
