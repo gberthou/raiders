@@ -2,9 +2,12 @@ import dijkstra
 import time
 import statistics
 import collections
+import itertools
 import sys
 
 area  = (0, 0, 70, 70)
+# Square obstacle
+forbiddenPointSet = set(itertools.combinations(range(10, 20), 2))
 start = (10, 10)
 goal  = (40, 60)
 
@@ -12,7 +15,7 @@ t = []
 N = 10
 for i in range(N):
     a = time.time()
-    path = dijkstra.searchPath(area, start, goal)
+    path = dijkstra.searchPath(area, forbiddenPointSet, start, goal)
     t.append(time.time() - a)
 
 # NetPBM output, can be converted to png using:

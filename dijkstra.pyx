@@ -22,7 +22,7 @@ cdef dist_t calcDistance(p0, p1) except *:
 
 # x1 > x0
 # y1 > y0
-cdef dijkstra(area, start, goal):
+cdef dijkstra(area, forbiddenPointSet, start, goal):
     cdef coord_t x0, y0, x1, y1, startX, startY, goalX, goalY
 
     x0, y0, x1, y1 = area
@@ -54,15 +54,16 @@ cdef dijkstra(area, start, goal):
             # What does "alt" stands for ?
             alt = minDistance + 1 + calcDistance(neighbor, goal) # A* like
             if neighbor not in distMap.keys() or alt < distMap[neighbor]:
-                distMap[neighbor] = alt
-                prevMap[neighbor] = minDistPoint
+                if neighbor not in forbiddenPointSet:
+                    distMap[neighbor] = alt
+                    prevMap[neighbor] = minDistPoint
     return prevMap
 
-def searchPath(area, start, goal):
+def searchPath(area, forbiddenPointSet, start, goal):
     if start == goal:
         return [start]
-
-    prevMap = dijkstra(area, start, goal)
+    
+    prevMap = dijkstra(area, forbiddenPointSet, start, goal)
     if goal not in prevMap.keys(): # No path
         return None
 
