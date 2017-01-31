@@ -12,17 +12,23 @@ t = []
 N = 10
 for i in range(N):
     a = time.time()
-    tmp = dijkstra.searchPath(area, start, goal)
+    path = dijkstra.searchPath(area, start, goal)
     t.append(time.time() - a)
 
 # NetPBM output, can be converted to png using:
 # dikjstraTest.py | convert /dev/stdin path.png
-img = collections.defaultdict(lambda: (0x0, 0x0, 0x0))
-for i, j in tmp:
-    img[i, j] = (0xFF, 0xFF, 0xFF)
+path_offset = 50
+background_color = (0x0, 0x0, 0x0)
+start_color = (0x00, 0x00, 0xFF)
+goal_color =  (0xFF, 0x00, 0x00)
 
-img[start] = (0x00, 0x00, 0xFF)
-img[goal] = (0xFF, 0x00, 0x00)
+img = collections.defaultdict(lambda: background_color)
+for k, point in enumerate(path):
+    grey = int(k/len(path) * (0xFF-path_offset))+path_offset
+    img[point] = (grey, grey, grey)
+
+img[start] = start_color
+img[goal] = goal_color
 
 print('P3')
 print(str(area[2])+' '+str(area[3]))
