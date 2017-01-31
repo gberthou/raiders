@@ -1,6 +1,7 @@
 # All coordinates are in tile space
 #cython: language_level=3
 from libc.stdint cimport uint32_t, uint64_t, UINT64_MAX
+import collections
 
 # Used for any coordinates
 ctypedef uint32_t coord_t
@@ -65,14 +66,14 @@ def searchPath(area, start, goal):
     if goal not in prevMap.keys(): # No path
         return None
 
-    path = [goal]
-    lastPoint = goal
+    path = collections.deque([goal])
+    firstPoint = goal
     while True:
         try:
-            lastPoint = prevMap[lastPoint]
+            firstPoint = prevMap[firstPoint]
         except KeyError:
             break
         else:
-            path.append(lastPoint)
-    return reversed(path)
+            path.appendleft(firstPoint)
+    return path
 
