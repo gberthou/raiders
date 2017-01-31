@@ -1,6 +1,13 @@
 import ecs
 import components as comp
 import constants as cst
+from math import floor
+
+# Math
+def floorTowardsZero(x):
+    if x < 0:
+        return 1 + floor(x)
+    return floor(x)
 
 # Basic transformations
 
@@ -47,7 +54,21 @@ def inWeaponRange(friend, foe):
     foe_pos = foe.component(comp.Position)
     xdiff = abs(friend_pos.x - foe_pos.x)
     ydiff = abs(friend_pos.y - foe_pos.y)
-    return xdiff**2 + ydiff**2 <= friend.component(comp.Weapon).atkRange**2
+    return xdiff**2 + ydiff**2 <= (friend.component(comp.Weapon).atkRange)**2
+
+
+def closestTileInRange(posWorld, targetWorld, rang):
+    p = world2grid(posWorld)
+    t = world2grid(targetWorld)
+
+    vector = vec2(t, p)
+    length = norm(vector)
+    factor = rang / (length * cst.TILE_SIZE)
+
+    delta = (floorTowardsZero(vector[0] * factor), floorTowardsZero(vector[1] * factor))
+    print(delta)
+    return (t[0] + delta[0], t[1] + delta[1])
+
 
 
 

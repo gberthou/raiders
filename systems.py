@@ -135,13 +135,21 @@ class PlayerAttack(ecs.System):
         pass
 
     def update(self, em, eventManager, dt):
-        for e in em.getEntitiesWithComponents([comp.Fighter, comp.Weapon, comp.AttackTarget]):
+        for e in em.getEntitiesWithComponents([comp.Position, comp.Fighter, comp.Weapon, comp.AttackTarget]):
             target = e.component(comp.AttackTarget)
             foe = target.target
 
-            if not utils.inWeaponRange(e, foe) or foe.component(comp.Vulnerable).currenthp == 0:
+            if foe.component(comp.Vulnerable).currenthp <= 0:
                 e.removeComponent(comp.AttackTarget)
-                return
+                continue
+
+            if not utils.inWeaponRange(e, foe):
+                pos    = e.component(comp.Position)
+                foepos = foe.component(comp.Position)
+
+                moveT = utils.closestTileInRange((pos.x, pos.y), (foepos.x, foepos.y), e.component(comp.Weapon).atkRange)
+                e.addComponent(comp.MovementTarget(moveT))
+                continue
 
             atkSpeed = e.component(comp.Weapon).atkSpeed
 

@@ -31,7 +31,7 @@ if __name__ == "__main__":
     pelo = facto.createDefaultFighter()
 
     foe = facto.createDefaultFighter()
-    foe.component(comp.Position).x = 300
+    foe.component(comp.Position).x = 320
     foe.component(comp.Fighter).team = 28
     foe.component(comp.Vulnerable).currenthp = 75
 
