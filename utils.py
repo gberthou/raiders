@@ -5,15 +5,16 @@ from math import floor
 
 # Math
 def floorTowardsZero(x):
-    if x < 0:
-        return 1 + floor(x)
-    return floor(x)
+    # if x < 0:
+    #     return 1 + floor(x)
+    # return floor(x)
+    return int(x)
 
 # Basic transformations
 
 def world2grid(pos):
     x, y = pos
-    return x // cst.TILE_SIZE, y // cst.TILE_SIZE
+    return int(x // cst.TILE_SIZE), int(y // cst.TILE_SIZE)
 
 def grid2world(pos):
     x, y = pos
@@ -66,7 +67,6 @@ def closestTileInRange(posWorld, targetWorld, rang):
     factor = rang / (length * cst.TILE_SIZE)
 
     delta = (floorTowardsZero(vector[0] * factor), floorTowardsZero(vector[1] * factor))
-    print(delta)
     return (t[0] + delta[0], t[1] + delta[1])
 
 

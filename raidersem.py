@@ -25,13 +25,15 @@ class RaidersEntityManager(ecs.EntityManager):
     def assignTargetToSelected(self, x, y):
         foe = self.fighterAt(x, y)
 
-        tileX = x // cst.TILE_SIZE
-        tileY = y // cst.TILE_SIZE
+        tileX = int(x // cst.TILE_SIZE)
+        tileY = int(y // cst.TILE_SIZE)
 
         selected = self.getEntitiesWithComponents([comp.Selected])
         if len(selected) > 0:
             selected = selected[0]
             if foe == None:
+                selected.removeComponent(comp.AttackTarget)
+                selected.removeComponent(comp.Path)
                 selected.addComponent(comp.MovementTarget((tileX, tileY)))
             elif utils.areFoes(selected, foe):
                 if not selected.hasComponent(comp.AttackTarget) or selected.component(comp.AttackTarget).target != foe:

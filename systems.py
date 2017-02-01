@@ -104,7 +104,7 @@ class MovementAI(ecs.System):
                 e.removeComponent(comp.Path)
             else:
                 if not e.hasComponent(comp.Path):
-                    area = (pos.x - 30, pos.y - 30, pos.x + 30, pos.y + 30)
+                    area = (currentTile[0] - 30, currentTile[1] - 30, currentTile[0] + 30, currentTile[1] + 30)
                     p = dijkstra.searchPath(area, currentTile, targetTile)
                     if p == None: # No path found
                         e.removeComponent(comp.MovementTarget)
@@ -128,8 +128,6 @@ class MovementAI(ecs.System):
                 pos.x += movement[0]
                 pos.y += movement[1]
 
-            e.removeComponent(comp.Selected)
-
 class PlayerAttack(ecs.System):
     def __init__(self):
         pass
@@ -147,8 +145,13 @@ class PlayerAttack(ecs.System):
                 pos    = e.component(comp.Position)
                 foepos = foe.component(comp.Position)
 
+                currentMoveT = e.component(comp.MovementTarget) if e.hasComponent(comp.MovementTarget) else None
+
                 moveT = utils.closestTileInRange((pos.x, pos.y), (foepos.x, foepos.y), e.component(comp.Weapon).atkRange)
-                e.addComponent(comp.MovementTarget(moveT))
+
+                if currentMoveT == None or currentMoveT.target != moveT:
+                    e.removeComponent(comp.Path)
+                    e.addComponent(comp.MovementTarget(moveT))
                 continue
 
             atkSpeed = e.component(comp.Weapon).atkSpeed
