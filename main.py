@@ -1,3 +1,4 @@
+import sys
 import ecs
 import components as comp
 import systems
@@ -16,6 +17,15 @@ if __name__ == "__main__":
     view.center = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
     view.size = (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     window.view = view
+
+    texture = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
+    
+    if not sf.Shader.is_available():
+        print("No shader, no game :(", file=sys.stderr)
+        sys.exit(1)
+
+    shader = sf.Shader.from_file(fragment = "shader.frag")
+    shader.set_parameter("current")
 
     em = raidersem.RaidersEntityManager()
     eventManager  = ecs.EventManager()
@@ -55,6 +65,11 @@ if __name__ == "__main__":
         clock.restart()
 
         window.clear(sf.Color(0, 255, 0))
+        
+        states = sf.RenderStates()
+        states.shader = shader
+        # window.draw(sf.Sprite(texture.texture), states)
+
         app.updateAll(dt)
         window.display()
 
