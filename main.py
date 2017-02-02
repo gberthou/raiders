@@ -19,7 +19,8 @@ if __name__ == "__main__":
     view.size = (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     window.view = view
 
-    texture = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
+    textureWorld = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
+    textureHUD   = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     
     if not sf.Shader.is_available():
         print("No shader, no game :(", file=sys.stderr)
@@ -32,10 +33,10 @@ if __name__ == "__main__":
     eventManager  = ecs.EventManager()
     app = ecs.ECSApp(em, eventManager)
 
-    app.addSystem(systems.DrawMap(window))
-    app.addSystem(systems.DrawFighter(window))
-    app.addSystem(systems.DrawHealthBar(window))
-    app.addSystem(systems.DrawWeaponRange(window))
+    app.addSystem(systems.DrawMap(textureWorld))
+    app.addSystem(systems.DrawFighter(textureWorld))
+    app.addSystem(systems.DrawHealthBar(textureHUD))
+    app.addSystem(systems.DrawWeaponRange(textureHUD))
     app.addSystem(systems.MovementAI())
     app.addSystem(systems.PlayerAttack())
 
@@ -67,12 +68,18 @@ if __name__ == "__main__":
         dt = clock.elapsed_time.seconds
         clock.restart()
 
-        window.clear(sf.Color(0, 255, 0))
+        window.clear()
+        textureWorld.clear(sf.Color(0,0,0,0))
+        textureHUD.clear(sf.Color(0,0,0,0))
         
         states = sf.RenderStates()
         states.shader = shader
-        # window.draw(sf.Sprite(texture.texture), states)
 
         app.updateAll(dt)
+        textureWorld.display()
+        textureHUD.display()
+        
+        window.draw(sf.Sprite(textureWorld.texture), states)
+        window.draw(sf.Sprite(textureHUD.texture))
         window.display()
 
