@@ -4,10 +4,25 @@ import components as comp
 import constants as cst
 import dijkstra
 import utils
+import assets
 
 from sfml import sf
 
 ### Graphics ###
+
+class DrawMap(ecs.System):
+    def __init__(self, window):
+        self.window = window
+
+    def update(self, em, eventManager, dt):
+        tilemap = em.getEntitiesWithComponents([comp.DrawableMap])[0].component(comp.DrawableMap).surface
+        for w, heights in tilemap.items():
+            for h, tiletype in heights.items():
+                tile = sf.RectangleShape()
+                tile.size = (cst.TILE_SIZE, cst.TILE_SIZE)
+                tile.position = (int(w) * cst.TILE_SIZE, int(h) * cst.TILE_SIZE)
+                tile.fill_color = assets.tileset[cst.TileType(tiletype)]
+                self.window.draw(tile)
 
 class DrawFighter(ecs.System):
     def __init__(self, window):
@@ -16,9 +31,13 @@ class DrawFighter(ecs.System):
     def update(self, em, eventManager, dt):
         for e in em.getEntitiesWithComponents([comp.DrawableFighter, comp.Position, comp.Fighter]):
             pos = e.component(comp.Position)
-            rect = e.component(comp.DrawableFighter).surface
-            rect.position = (pos.x, pos.y)
-            self.window.draw(rect)
+            shape = e.component(comp.DrawableFighter).surface
+            shape.position = (pos.x + 0.5*cst.TILE_SIZE - shape.radius, pos.y + 0.5*cst.TILE_SIZE - shape.radius)
+            if e.component(comp.Fighter).team == 0:
+                shape.fill_color = sf.Color.BLUE
+            else:
+                shape.fill_color = sf.Color.RED
+            self.window.draw(shape)
 
 class DrawHealthBar(ecs.System):
     def __init__(self, window):

@@ -1,10 +1,17 @@
 from enum import Enum
 
 BarVisibility = Enum("BarVisibility", "VISIBLE DAMAGED HIDDEN")
+TileType = Enum("TileType", [
+    ("PLAIN", 1),
+    ("FOREST", 2),
+    ("MOUNTAIN", 3),
+    ("WATER", 4),
+    ("ROAD", 5)
+    ])
 
 TILE_SIZE = 32
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 600
+WINDOW_WIDTH = 640 #20*32
+WINDOW_HEIGHT = 640
 
 # Health bars
 BAR_WIDTH   = int(0.8*TILE_SIZE)
