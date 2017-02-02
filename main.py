@@ -5,6 +5,7 @@ import systems
 import factory
 import constants as cst
 import raidersem
+import assets
 
 from sfml import sf
 
@@ -31,6 +32,7 @@ if __name__ == "__main__":
     eventManager  = ecs.EventManager()
     app = ecs.ECSApp(em, eventManager)
 
+    app.addSystem(systems.DrawMap(window))
     app.addSystem(systems.DrawFighter(window))
     app.addSystem(systems.DrawHealthBar(window))
     app.addSystem(systems.DrawWeaponRange(window))
@@ -38,6 +40,7 @@ if __name__ == "__main__":
     app.addSystem(systems.PlayerAttack())
 
     facto = factory.Factory(em)
+    game_map = facto.createDefaultMap("assets/map.json")
     pelo = facto.createDefaultFighter()
 
     foe = facto.createDefaultFighter()
