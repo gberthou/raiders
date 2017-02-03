@@ -6,6 +6,7 @@ import factory
 import constants as cst
 import raidersem
 import assets
+import shader
 
 from sfml import sf
 
@@ -26,8 +27,7 @@ if __name__ == "__main__":
         print("No shader, no game :(", file=sys.stderr)
         sys.exit(1)
 
-    shader = sf.Shader.from_file(fragment = "shader.frag")
-    shader.set_parameter("current")
+    fovShader = shader.FieldOfViewShader("shader.frag")
 
     em = raidersem.RaidersEntityManager()
     eventManager  = ecs.EventManager()
@@ -42,7 +42,13 @@ if __name__ == "__main__":
 
     facto = factory.Factory(em)
     game_map = facto.createDefaultMap("assets/map.json")
+
     pelo = facto.createDefaultFighter()
+
+    copain = facto.createDefaultFighter()
+    copain.component(comp.Position).y = 240
+
+    
 
     foe = facto.createDefaultFighter()
     foe.component(comp.Position).x = 320
@@ -71,13 +77,16 @@ if __name__ == "__main__":
         window.clear()
         textureWorld.clear(sf.Color(0,0,0,0))
         textureHUD.clear(sf.Color(0,0,0,0))
+    
         
         states = sf.RenderStates()
-        states.shader = shader
+        states.shader = fovShader.shader
 
         app.updateAll(dt)
         textureWorld.display()
         textureHUD.display()
+    
+        fovShader.update(em, 0)
         
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
