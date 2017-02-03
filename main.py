@@ -46,7 +46,7 @@ if __name__ == "__main__":
     pelo = facto.createDefaultFighter()
 
     copain = facto.createDefaultFighter()
-    copain.component(comp.Position).y = 240
+    copain.component(comp.Position).y = 352
 
     
 
