@@ -1,9 +1,17 @@
 uniform sampler2D texture;
+uniform float     aspectRatio;
 
 uniform vec2      allies[16];
 uniform float     ranges[16];
 
 const float ATTENUATION = .01;
+
+float distanceScaleInsensitive(vec2 a, vec2 b)
+{
+    float dx = (a.x - b.x);
+    float dy = (a.y - b.y) / aspectRatio;
+    return sqrt(dx * dx + dy * dy);
+}
 
 float computeFactor(float x, float range)
 {
@@ -23,7 +31,7 @@ float computeLight(vec2 position)
     float ret = 0.;
     for(int i = 0; i < 16; ++i)
     {
-        float d = distance(position, allies[i]);
+        float d = distanceScaleInsensitive(position, allies[i]);
         ret += computeFactor(d, ranges[i]);
     }
 

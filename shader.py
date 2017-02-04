@@ -6,6 +6,7 @@ class FieldOfViewShader:
     def __init__(self, filename):
         self.shader = sf.Shader.from_file(fragment = filename)
         self.shader.set_parameter("texture")
+        self.shader.set_parameter("aspectRatio", cst.WINDOW_WIDTH / cst.WINDOW_HEIGHT);
 
         self.reinit()
 
@@ -20,7 +21,7 @@ class FieldOfViewShader:
             if fighter.team == playerTeam: 
                 pos = e.component(comp.Position)
                 self.shader.set_parameter("allies[%d]" % n, ((pos.x+.5*cst.TILE_SIZE)/cst.WINDOW_WIDTH, 1 - (pos.y+.5*cst.TILE_SIZE)/cst.WINDOW_HEIGHT))
-                self.shader.set_parameter("ranges[%d]" % n, fighter.fov)
+                self.shader.set_parameter("ranges[%d]" % n, fighter.fov / cst.WINDOW_WIDTH)
                 n += 1
 
         for i in range(n, 16):
