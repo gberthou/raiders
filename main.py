@@ -6,7 +6,6 @@ import factory
 import constants as cst
 import raidersem
 import assets
-import shader
 import resources
 
 from sfml import sf
@@ -27,8 +26,6 @@ if __name__ == "__main__":
     if not sf.Shader.is_available():
         print("No shader, no game :(", file=sys.stderr)
         sys.exit(1)
-
-    fovShader = shader.FieldOfViewShader("shader.frag")
 
     rs = resources.Resources()
 
@@ -87,13 +84,13 @@ if __name__ == "__main__":
     
         
         states = sf.RenderStates()
-        states.shader = fovShader.shader
+        states.shader = rs.fovShader.shader
 
         app.updateAll(dt)
         textureWorld.display()
         textureHUD.display()
     
-        fovShader.update(em, 0)
+        rs.fovShader.update(em, 0)
         
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
