@@ -4,7 +4,7 @@ Path,path,currentIndex
 Weapon,atk,atkSpeed,atkRange
 Armor,defense,slowFactor
 Vulnerable,hpmax,currenthp,visibility
-Fighter,team,movSpeed,fov
+Fighter,name,team,movSpeed,fov
 PhysicalObject,size
 Door,tile0,tile1,isOpen
 DrawableMap,surface
@@ -14,3 +14,4 @@ DrawableTop,surface
 DrawableHUD,surface
 Position,x,y
 Selected
+Leader

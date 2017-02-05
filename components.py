@@ -34,7 +34,8 @@ class Vulnerable(ecs.Component):
         self.visibility = visibility
 
 class Fighter(ecs.Component):
-    def __init__(self, team, movSpeed, fov):
+    def __init__(self, name, team, movSpeed, fov):
+        self.name = name
         self.team = team
         self.movSpeed = movSpeed
         self.fov = fov
@@ -75,6 +76,10 @@ class Position(ecs.Component):
         self.y = y
 
 class Selected(ecs.Component):
+    def __init__(self):
+        pass
+
+class Leader(ecs.Component):
     def __init__(self):
         pass
 

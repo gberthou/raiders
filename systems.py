@@ -90,6 +90,53 @@ class DrawWeaponRange(ecs.System):
 
             self.window.draw(rangeCircle)
 
+class DrawTeamHUD(ecs.System):
+    def __init__(self, window, rs):
+        self.window = window
+        self.rs = rs
+        self.team = -1
+
+    def update(self, em, eventManager, dt):
+        allies = [e for e in em.getEntitiesWithComponents([comp.Fighter]) if e.component(comp.Fighter).team == self.team]
+        
+        leaderPortrait = sf.RectangleShape((cst.PORTRAIT_LEADER_SIZE, cst.PORTRAIT_LEADER_SIZE))
+        leaderPortrait.origin = (0, cst.PORTRAIT_LEADER_SIZE)
+        leaderPortrait.position = (cst.PORTRAIT_X_MARGIN, cst.WINDOW_HEIGHT - cst.PORTRAIT_Y_MARGIN)
+
+        text = sf.Text()
+        text.font = self.rs.font
+        text.character_size = 30
+        text.color = sf.Color(128, 128, 128)
+
+        self.window.draw(leaderPortrait)
+
+        leader = [e for e in allies if e.hasComponent(comp.Leader)]
+        if len(leader): # Should be always true
+            text.string = leader[0].component(comp.Fighter).name[0]
+            text.origin = (text.global_bounds.width / 2, text.global_bounds.height / 2)
+            text.position = (leaderPortrait.position.x + cst.PORTRAIT_LEADER_SIZE / 2, leaderPortrait.position.y - cst.PORTRAIT_LEADER_SIZE / 2)
+            self.window.draw(text)
+            
+            allies.remove(leader[0])
+        
+        text.character_size = 16
+
+        for i in range(cst.MAX_TEAM_SIZE - 1):
+            emptySlot = (i >= len(allies))
+            portrait = sf.RectangleShape((cst.PORTRAIT_NORMAL_SIZE, cst.PORTRAIT_NORMAL_SIZE))
+            portrait.origin = (0, cst.PORTRAIT_NORMAL_SIZE)
+            portrait.position = (cst.PORTRAIT_X_MARGIN + cst.PORTRAIT_LEADER_SIZE + i * cst.PORTRAIT_NORMAL_SIZE + (i+1) * cst.PORTRAIT_INTER, cst.WINDOW_HEIGHT - cst.PORTRAIT_Y_MARGIN)
+            if emptySlot:
+                portrait.fill_color = sf.Color(128, 128, 128)
+
+            self.window.draw(portrait)
+            
+            if not emptySlot:
+                text.string = allies[i].component(comp.Fighter).name[0]
+                text.origin = (text.global_bounds.width / 2, text.global_bounds.height / 2)
+                text.position = (portrait.position.x + cst.PORTRAIT_NORMAL_SIZE / 2, portrait.position.y - cst.PORTRAIT_NORMAL_SIZE / 2)
+                self.window.draw(text)
+
 ### Core ###
 
 class Teleportation(ecs.System):

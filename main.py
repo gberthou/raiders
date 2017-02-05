@@ -7,6 +7,7 @@ import constants as cst
 import raidersem
 import assets
 import shader
+import resources
 
 from sfml import sf
 
@@ -29,14 +30,20 @@ if __name__ == "__main__":
 
     fovShader = shader.FieldOfViewShader("shader.frag")
 
+    rs = resources.Resources()
+
     em = raidersem.RaidersEntityManager()
     eventManager  = ecs.EventManager()
     app = ecs.ECSApp(em, eventManager)
+
+    sDTHUD = systems.DrawTeamHUD(textureHUD, rs)
+    sDTHUD.team = 0
 
     app.addSystem(systems.DrawMap(textureWorld))
     app.addSystem(systems.DrawFighter(textureWorld))
     app.addSystem(systems.DrawHealthBar(textureHUD))
     app.addSystem(systems.DrawWeaponRange(textureHUD))
+    app.addSystem(sDTHUD)
     app.addSystem(systems.MovementAI())
     app.addSystem(systems.PlayerAttack())
 
@@ -44,11 +51,11 @@ if __name__ == "__main__":
     game_map = facto.createDefaultMap("assets/map.json")
 
     pelo = facto.createDefaultFighter()
+    pelo.addComponent(comp.Leader())
 
     copain = facto.createDefaultFighter()
     copain.component(comp.Position).y = 352
-
-    
+    copain.component(comp.Fighter).name = "Jean"
 
     foe = facto.createDefaultFighter()
     foe.component(comp.Position).x = 320
@@ -90,5 +97,6 @@ if __name__ == "__main__":
         
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
+
         window.display()
 
