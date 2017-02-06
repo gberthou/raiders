@@ -33,12 +33,16 @@ if __name__ == "__main__":
     eventManager  = ecs.EventManager()
     app = ecs.ECSApp(em, eventManager)
 
-    sDTHUD = systems.DrawTeamHUD(textureHUD, rs)
+    sDF         = systems.DrawFighter(textureWorld)
+    sDF.team    = 0
+    sDHB        = systems.DrawHealthBar(textureHUD)
+    sDHB.team   = 0
+    sDTHUD      = systems.DrawTeamHUD(textureHUD, rs)
     sDTHUD.team = 0
 
     app.addSystem(systems.DrawMap(textureWorld))
-    app.addSystem(systems.DrawFighter(textureWorld))
-    app.addSystem(systems.DrawHealthBar(textureHUD))
+    app.addSystem(sDF)
+    app.addSystem(sDHB)
     app.addSystem(systems.DrawWeaponRange(textureHUD))
     app.addSystem(sDTHUD)
     app.addSystem(systems.MovementAI())

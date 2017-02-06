@@ -45,7 +45,20 @@ def areFoes(fighterA, fighterB):
     # TODO: Manage neutral/friendly factions
     return fighterA.component(comp.Fighter).team != fighterB.component(comp.Fighter).team
 
+# Returns whether eA can see eB
+def canSee(eA, eB):
+    posA = eA.component(comp.Position)
+    posB = eB.component(comp.Position)
 
+    d2 = norm2(vec2((posA.x, posA.y), (posB.x, posB.y)))
+    return d2 <= (eA.component(comp.Fighter).fov + .5 * cst.TILE_SIZE)**2
+
+# Returns whether at least one among group can see eB
+def oneCanSee(group, eB):
+    for i in group:
+        if canSee(i, eB):
+            return True
+    return False
 
 # Pathing & "Physics"
 
