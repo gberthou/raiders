@@ -1,13 +1,13 @@
 # All coordinates are in tile space
 #cython: language_level=3
-from libc.stdint cimport uint32_t, uint64_t, UINT64_MAX
+from libc.stdint cimport int32_t, int64_t, INT64_MAX
 import collections
 
 # Used for any coordinates
-ctypedef uint32_t coord_t
+ctypedef int32_t coord_t
 # Used for distances
-ctypedef uint64_t dist_t
-DIST_MAX = UINT64_MAX
+ctypedef int64_t dist_t
+DIST_MAX = INT64_MAX
 
 cdef neighborsOf(pos):
     cdef coord_t x, y
