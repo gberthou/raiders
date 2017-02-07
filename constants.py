@@ -29,4 +29,8 @@ PORTRAIT_NORMAL_SIZE = 32
 # Gameplay
 MAX_TEAM_SIZE = 5
 
-
+# Daylight
+DAY_DURATION = 60 # Seconds
+DAY_LUM_MIN  = 0.05
+DAY_LUM_MAX  = 0.9
+#DAY_A        = -4 * (DAY_LUM_MAX - DAY_LUM_MIN) / (DAY_DURATION ** 2)
