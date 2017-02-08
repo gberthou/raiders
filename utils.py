@@ -91,6 +91,6 @@ def moveView(view, xm, ym):
 def view2world(view, pos):
     new_x = view.center.x - cst.WINDOW_WIDTH/2 + pos.x
     new_y = view.center.y - cst.WINDOW_HEIGHT/2 + pos.y
-    print((new_x, new_y))
+    #new_x, new_y = view.inverse_transform.transform_point(pos)
     return new_x, new_y
 
