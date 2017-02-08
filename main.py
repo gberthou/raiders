@@ -5,6 +5,7 @@ import systems
 import factory
 import constants as cst
 import raidersem
+import timeMachine
 import assets
 import resources
 import utils
@@ -34,12 +35,16 @@ if __name__ == "__main__":
     eventManager  = ecs.EventManager()
     app = ecs.ECSApp(em, eventManager)
 
-    sDTHUD = systems.DrawTeamHUD(textureHUD, rs)
+    sDF         = systems.DrawFighter(textureWorld)
+    sDF.team    = 0
+    sDHB        = systems.DrawHealthBar(textureHUD)
+    sDHB.team   = 0
+    sDTHUD      = systems.DrawTeamHUD(textureHUD, rs)
     sDTHUD.team = 0
 
     app.addSystem(systems.DrawMap(textureWorld))
-    app.addSystem(systems.DrawFighter(textureWorld))
-    app.addSystem(systems.DrawHealthBar(textureHUD))
+    app.addSystem(sDF)
+    app.addSystem(sDHB)
     app.addSystem(systems.DrawWeaponRange(textureHUD))
     app.addSystem(sDTHUD)
     app.addSystem(systems.MovementAI())
@@ -53,7 +58,7 @@ if __name__ == "__main__":
 
     copain = facto.createDefaultFighter()
     copain.component(comp.Position).y = 352
-    copain.component(comp.Fighter).name = "Jean"
+    copain.component(comp.Fighter).name = "Jeannot"
 
     foe = facto.createDefaultFighter()
     foe.component(comp.Position).x = 320
@@ -61,6 +66,7 @@ if __name__ == "__main__":
     foe.component(comp.Vulnerable).currenthp = 75
 
     clock = sf.Clock()
+    tm = timeMachine.TimeMachine()
 
     while window.is_open:
         for event in window.events:
@@ -90,10 +96,12 @@ if __name__ == "__main__":
         states.shader = rs.fovShader.shader
 
         app.updateAll(dt)
+        tm.update(dt)
+
         textureWorld.display()
         textureHUD.display()
 
-        rs.fovShader.update(em, 0)
+        rs.fovShader.update(em, 0, tm)
 
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))

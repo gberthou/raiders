@@ -1,5 +1,6 @@
 uniform sampler2D texture;
 uniform float     aspectRatio;
+uniform float     baseLuminance;
 
 uniform vec2      allies[16];
 uniform float     ranges[16];
@@ -35,7 +36,7 @@ float computeLight(vec2 position)
         ret += computeFactor(d, ranges[i]);
     }
 
-    return clamp(ret, 0., 1.);
+    return clamp(ret, baseLuminance, 1.);
 }
 
 void main()

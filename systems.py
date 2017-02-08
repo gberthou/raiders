@@ -27,13 +27,19 @@ class DrawMap(ecs.System):
 class DrawFighter(ecs.System):
     def __init__(self, window):
         self.window = window
+        self.team = -1
 
     def update(self, em, eventManager, dt):
+        allies = em.teamMembers(self.team)
+
         for e in em.getEntitiesWithComponents([comp.DrawableFighter, comp.Position, comp.Fighter]):
+            if e.component(comp.Fighter).team != self.team and not utils.oneCanSee(allies, e):
+                continue
+
             pos = e.component(comp.Position)
             shape = e.component(comp.DrawableFighter).surface
             shape.position = (pos.x + 0.5*cst.TILE_SIZE - shape.radius, pos.y + 0.5*cst.TILE_SIZE - shape.radius)
-            if e.component(comp.Fighter).team == 0:
+            if e.component(comp.Fighter).team == self.team:
                 shape.fill_color = sf.Color.BLUE
             else:
                 shape.fill_color = sf.Color.RED
@@ -42,10 +48,15 @@ class DrawFighter(ecs.System):
 class DrawHealthBar(ecs.System):
     def __init__(self, window):
         self.window = window
+        self.team = -1
 
     def update(self, em, eventManager, dt):
+        allies = em.teamMembers(self.team)
+
         for e in em.getEntitiesWithComponents([comp.DrawableHUD, comp.Position, comp.Vulnerable]):
             if e.component(comp.Vulnerable).visibility == cst.BarVisibility.HIDDEN:
+                continue
+            if e.component(comp.Fighter).team != self.team and not utils.oneCanSee(allies, e):
                 continue
 
             # TODO: can divide by 0, handle with care
@@ -97,7 +108,7 @@ class DrawTeamHUD(ecs.System):
         self.team = -1
 
     def update(self, em, eventManager, dt):
-        allies = [e for e in em.getEntitiesWithComponents([comp.Fighter]) if e.component(comp.Fighter).team == self.team]
+        allies = em.teamMembers(self.team)
         
         leaderPortrait = sf.RectangleShape((cst.PORTRAIT_LEADER_SIZE, cst.PORTRAIT_LEADER_SIZE))
         leaderPortrait.origin = (0, cst.PORTRAIT_LEADER_SIZE)
@@ -171,7 +182,7 @@ class MovementAI(ecs.System):
             else:
                 if not e.hasComponent(comp.Path):
                     area = (currentTile[0] - 30, currentTile[1] - 30, currentTile[0] + 30, currentTile[1] + 30)
-                    p = dijkstra.searchPath(area, currentTile, targetTile)
+                    p = dijkstra.searchPath(area, {}, currentTile, targetTile)
                     if p == None: # No path found
                         e.removeComponent(comp.MovementTarget)
                         e.removeComponent(comp.Selected)

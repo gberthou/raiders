@@ -7,6 +7,7 @@ class FieldOfViewShader:
         self.shader = sf.Shader.from_file(fragment = filename)
         self.shader.set_parameter("texture")
         self.shader.set_parameter("aspectRatio", cst.WINDOW_WIDTH / cst.WINDOW_HEIGHT);
+        self.shader.set_parameter("baseLuminance", 0.)
 
         self.reinit()
 
@@ -14,7 +15,7 @@ class FieldOfViewShader:
         for i in range(16):
             self.shader.set_parameter("ranges[%d]" % i, 0)
 
-    def update(self, em, playerTeam):
+    def update(self, em, playerTeam, timeMachine):
         n = 0
         for e in em.getEntitiesWithComponents([comp.Fighter, comp.Position]):
             fighter = e.component(comp.Fighter) 
@@ -26,3 +27,5 @@ class FieldOfViewShader:
 
         for i in range(n, 16):
             self.shader.set_parameter("ranges[%d]" % i, 0)
+
+        self.shader.set_parameter("baseLuminance", timeMachine.getLuminance())
