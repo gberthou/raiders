@@ -3,6 +3,8 @@ import components as comp
 import constants as cst
 from math import floor
 
+from sfml import sf
+
 # Math
 def floorTowardsZero(x):
     # if x < 0:
@@ -82,6 +84,26 @@ def closestTileInRange(posWorld, targetWorld, rang):
     delta = (floorTowardsZero(vector[0] * factor), floorTowardsZero(vector[1] * factor))
     return (t[0] + delta[0], t[1] + delta[1])
 
+# Scrolling
 
+def insideBorder(x, y):
+    border_rect = sf.Rect((cst.BORDER_SIZE, cst.BORDER_SIZE), (cst.WINDOW_WIDTH - 2*cst.BORDER_SIZE, cst.WINDOW_HEIGHT - 2*cst.BORDER_SIZE))
+    window_rect = sf.Rect((0, 0), (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT))
+    return window_rect.contains((x, y)) and not border_rect.contains((x, y))
 
+def moveView(view, xm, ym):
+    if not insideBorder(xm, ym):
+        return
+    # TODO handle acceleration factor
+    factor = 0.05
+    xm_center = xm - view.center.x
+    ym_center = ym - view.center.y
+    view.center = (view.center.x + factor * xm_center , view.center.y + factor * ym_center)
+    print(view.center)
+
+def view2world(view, pos):
+    new_x = view.center.x - cst.WINDOW_WIDTH/2 + pos.x
+    new_y = view.center.y - cst.WINDOW_HEIGHT/2 + pos.y
+    #new_x, new_y = view.inverse_transform.transform_point(pos)
+    return new_x, new_y
 
