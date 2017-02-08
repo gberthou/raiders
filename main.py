@@ -7,6 +7,7 @@ import constants as cst
 import raidersem
 import assets
 import resources
+import utils
 
 from sfml import sf
 
@@ -22,7 +23,7 @@ if __name__ == "__main__":
 
     textureWorld = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     textureHUD   = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
-    
+
     if not sf.Shader.is_available():
         print("No shader, no game :(", file=sys.stderr)
         sys.exit(1)
@@ -67,13 +68,15 @@ if __name__ == "__main__":
                 window.close()
             elif type(event) is sf.MouseButtonEvent:
                 if event.button == sf.Mouse.LEFT:
-                    fighter = em.fighterAt(event.position.x, event.position.y)
+                    x, y = utils.view2world(window.view, event.position)
+                    fighter = em.fighterAt(x, y)
                     if fighter != None:
                         em.selectFighter(fighter)
                     else: # No fighter underneath mouse cursor
                         em.unselectFighters()
                 elif event.button == sf.Mouse.RIGHT:
-                    em.assignTargetToSelected(event.position.x, event.position.y)
+                    x, y = utils.view2world(window.view, event.position)
+                    em.assignTargetToSelected(x, y)
 
         dt = clock.elapsed_time.seconds
         clock.restart()
@@ -81,19 +84,21 @@ if __name__ == "__main__":
         window.clear()
         textureWorld.clear(sf.Color(0,0,0,0))
         textureHUD.clear(sf.Color(0,0,0,0))
-    
-        
+
+
         states = sf.RenderStates()
         states.shader = rs.fovShader.shader
 
         app.updateAll(dt)
         textureWorld.display()
         textureHUD.display()
-    
+
         rs.fovShader.update(em, 0)
-        
+
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
+
+        utils.moveView(window.view, sf.Mouse.get_position().x, sf.Mouse.get_position().y)
 
         window.display()
 

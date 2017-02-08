@@ -12,6 +12,7 @@ TileType = Enum("TileType", [
 TILE_SIZE = 32
 WINDOW_WIDTH = 640 #20*32
 WINDOW_HEIGHT = 640
+BORDER_SIZE = 64
 
 # Health bars
 BAR_WIDTH   = int(0.8*TILE_SIZE)
