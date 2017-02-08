@@ -3,7 +3,6 @@ import constants as cst
 import ecs
 import utils
 
-
 class RaidersEntityManager(ecs.EntityManager):
 
     def fighterAt(self, x, y):
@@ -33,8 +32,9 @@ class RaidersEntityManager(ecs.EntityManager):
             selected = selected[0]
             if foe == None:
                 selected.removeComponent(comp.AttackTarget)
-                selected.removeComponent(comp.Path)
-                selected.addComponent(comp.MovementTarget((tileX, tileY)))
+                if not selected.hasComponent(comp.MovementTarget) or selected.component(comp.MovementTarget).target != (tileX, tileY):
+                    selected.removeComponent(comp.Path)
+                    selected.addComponent(comp.MovementTarget((tileX, tileY)))
             elif utils.areFoes(selected, foe):
                 if not selected.hasComponent(comp.AttackTarget) or selected.component(comp.AttackTarget).target != foe:
                     selected.addComponent(comp.AttackTarget(foe, 1/selected.component(comp.Weapon).atkSpeed))
