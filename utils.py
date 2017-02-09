@@ -91,19 +91,13 @@ def insideBorder(x, y):
     window_rect = sf.Rect((0, 0), (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT))
     return window_rect.contains((x, y)) and not border_rect.contains((x, y))
 
-def moveView(view, xm, ym):
+def scrollView(view, xm, ym):
     if not insideBorder(xm, ym):
         return
     # TODO handle acceleration factor
-    factor = 0.05
+    factor = 0.02
     xm_center = xm - view.center.x
     ym_center = ym - view.center.y
     view.center = (view.center.x + factor * xm_center , view.center.y + factor * ym_center)
-    print(view.center)
 
-def view2world(view, pos):
-    new_x = view.center.x - cst.WINDOW_WIDTH/2 + pos.x
-    new_y = view.center.y - cst.WINDOW_HEIGHT/2 + pos.y
-    #new_x, new_y = view.inverse_transform.transform_point(pos)
-    return new_x, new_y
 

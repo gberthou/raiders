@@ -24,6 +24,10 @@ if __name__ == "__main__":
     window.view = view
 
     textureWorld = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
+    viewWorld = sf.View()
+    viewWorld.center = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
+    viewWorld.size = (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
+    textureWorld.view = viewWorld
     textureHUD   = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
 
     if not sf.Shader.is_available():
@@ -75,15 +79,19 @@ if __name__ == "__main__":
                 window.close()
             elif type(event) is sf.MouseButtonEvent:
                 if event.button == sf.Mouse.LEFT:
-                    x, y = utils.view2world(window.view, event.position)
+                    #x, y = utils.view2world(window.view, event.position)
+                    x, y = textureWorld.map_pixel_to_coords(event.position)
                     fighter = em.fighterAt(x, y)
                     if fighter != None:
                         em.selectFighter(fighter)
                     else: # No fighter underneath mouse cursor
                         em.unselectFighters()
                 elif event.button == sf.Mouse.RIGHT:
-                    x, y = utils.view2world(window.view, event.position)
+                    #x, y = utils.view2world(window.view, event.position)
+                    x, y = textureWorld.map_pixel_to_coords(event.position)
                     em.assignTargetToSelected(x, y)
+            elif type(event) is sf.KeyEvent:
+                pass
 
         dt = clock.elapsed_time.seconds
         clock.restart()
@@ -107,7 +115,7 @@ if __name__ == "__main__":
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
 
-        utils.moveView(window.view, sf.Mouse.get_position().x, sf.Mouse.get_position().y)
+        utils.scrollView(textureWorld.view, sf.Mouse.get_position(window).x, sf.Mouse.get_position(window).y)
 
         window.display()
 
