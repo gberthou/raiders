@@ -6,6 +6,7 @@ from math import floor
 from sfml import sf
 
 # Math
+
 def floorTowardsZero(x):
     # if x < 0:
     #     return 1 + floor(x)
@@ -91,13 +92,35 @@ def insideBorder(x, y):
     window_rect = sf.Rect((0, 0), (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT))
     return window_rect.contains((x, y)) and not border_rect.contains((x, y))
 
-def scrollView(view, xm, ym):
+def scrollViewMouse(view, xm, ym):
     if not insideBorder(xm, ym):
         return
-    # TODO handle acceleration factor
+    # TODO handle mouse acceleration factor
     factor = 0.02
     xm_center = xm - view.center.x
     ym_center = ym - view.center.y
     view.center = (view.center.x + factor * xm_center , view.center.y + factor * ym_center)
+
+def scrollViewKeys(view, dx, dy):
+    # TODO handle keyboard acceleration factor
+    factor = 2
+    view.center = (view.center.x + factor * dx , view.center.y + factor * dy)
+
+# Events
+
+def anyMovementKeyPressed():
+    movementKeys = [sf.Keyboard.DOWN, sf.Keyboard.UP, sf.Keyboard.LEFT, sf.Keyboard.RIGHT]
+    return any([sf.Keyboard.is_key_pressed(key) for key in movementKeys])
+
+def updateScrollDiff(dx, dy):
+    if sf.Keyboard.is_key_pressed(sf.Keyboard.DOWN):
+        dy += 1
+    if sf.Keyboard.is_key_pressed(sf.Keyboard.UP):
+        dy -= 1
+    if sf.Keyboard.is_key_pressed(sf.Keyboard.LEFT):
+        dx -= 1
+    if sf.Keyboard.is_key_pressed(sf.Keyboard.RIGHT):
+        dx += 1
+    return dx, dy
 
 

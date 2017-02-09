@@ -73,6 +73,8 @@ if __name__ == "__main__":
     clock = sf.Clock()
     tm = timeMachine.TimeMachine()
 
+    dx, dy = 0, 0
+
     while window.is_open:
         for event in window.events:
             if type(event) is sf.CloseEvent:
@@ -90,8 +92,13 @@ if __name__ == "__main__":
                     #x, y = utils.view2world(window.view, event.position)
                     x, y = textureWorld.map_pixel_to_coords(event.position)
                     em.assignTargetToSelected(x, y)
-            elif type(event) is sf.KeyEvent:
-                pass
+
+
+        if utils.anyMovementKeyPressed():
+            dx, dy = utils.updateScrollDiff(dx, dy)
+            utils.scrollViewKeys(textureWorld.view, dx, dy)
+        else:
+            dx, dy = 0, 0
 
         dt = clock.elapsed_time.seconds
         clock.restart()
@@ -115,7 +122,7 @@ if __name__ == "__main__":
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
 
-        utils.scrollView(textureWorld.view, sf.Mouse.get_position(window).x, sf.Mouse.get_position(window).y)
+        utils.scrollViewMouse(textureWorld.view, sf.Mouse.get_position(window).x, sf.Mouse.get_position(window).y)
 
         window.display()
 
