@@ -46,8 +46,9 @@ class DrawFighter(ecs.System):
             self.window.draw(shape)
 
 class DrawHealthBar(ecs.System):
-    def __init__(self, window):
+    def __init__(self, window, view):
         self.window = window
+        self.view = view
         self.team = -1
 
     def update(self, em, eventManager, dt):
@@ -66,7 +67,7 @@ class DrawHealthBar(ecs.System):
 
             # Draw hp bar
             x, y = e.component(comp.Position).x, e.component(comp.Position).y
-            bar_position = (x + cst.BAR_X, y + cst.TILE_SIZE + cst.BAR_Y)
+            bar_position = self.window.map_coords_to_pixel((x + cst.BAR_X, y + cst.TILE_SIZE + cst.BAR_Y), self.view)
 
             redbar = sf.RectangleShape()
             redbar.position = bar_position
@@ -86,12 +87,14 @@ class DrawHealthBar(ecs.System):
                 self.window.draw(greenbar)
 
 class DrawWeaponRange(ecs.System):
-    def __init__(self, window):
+    def __init__(self, window, view):
         self.window = window
+        self.view = view
 
     def update(self, em, eventManager, dt):
         for e in em.getEntitiesWithComponents([comp.DrawableHUD, comp.Position, comp.Fighter, comp.Weapon, comp.Selected]):
             pos = e.component(comp.Position)
+            pos = self.window.map_coords_to_pixel((pos.x, pos.y), self.view)
             rangeCircle = sf.CircleShape()
             rangeCircle.radius = e.component(comp.Weapon).atkRange
             rangeCircle.position = (pos.x + 0.5*cst.TILE_SIZE - rangeCircle.radius, pos.y + 0.5*cst.TILE_SIZE - rangeCircle.radius)

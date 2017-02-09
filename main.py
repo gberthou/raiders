@@ -24,11 +24,12 @@ if __name__ == "__main__":
     window.view = view
 
     textureWorld = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
+    textureHUD   = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
+
     viewWorld = sf.View()
     viewWorld.center = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
     viewWorld.size = (cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     textureWorld.view = viewWorld
-    textureHUD   = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
 
     if not sf.Shader.is_available():
         print("No shader, no game :(", file=sys.stderr)
@@ -42,7 +43,7 @@ if __name__ == "__main__":
 
     sDF         = systems.DrawFighter(textureWorld)
     sDF.team    = 0
-    sDHB        = systems.DrawHealthBar(textureHUD)
+    sDHB        = systems.DrawHealthBar(textureHUD, viewWorld)
     sDHB.team   = 0
     sDTHUD      = systems.DrawTeamHUD(textureHUD, rs)
     sDTHUD.team = 0
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     app.addSystem(systems.DrawMap(textureWorld))
     app.addSystem(sDF)
     app.addSystem(sDHB)
-    app.addSystem(systems.DrawWeaponRange(textureHUD))
+    app.addSystem(systems.DrawWeaponRange(textureHUD, viewWorld))
     app.addSystem(sDTHUD)
     app.addSystem(systems.MovementAI())
     app.addSystem(systems.PlayerAttack())
@@ -100,7 +101,6 @@ if __name__ == "__main__":
         textureWorld.clear(sf.Color(0,0,0,0))
         textureHUD.clear(sf.Color(0,0,0,0))
 
-
         states = sf.RenderStates()
         states.shader = rs.fovShader.shader
 
@@ -110,12 +110,12 @@ if __name__ == "__main__":
         textureWorld.display()
         textureHUD.display()
 
-        rs.fovShader.update(em, 0, tm)
+        rs.fovShader.update(em, 0, tm, textureWorld)
 
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
 
-        utils.scrollView(textureWorld.view, sf.Mouse.get_position(window).x, sf.Mouse.get_position(window).y)
+        utils.scrollView(viewWorld, sf.Mouse.get_position(window).x, sf.Mouse.get_position(window).y)
 
         window.display()
 
