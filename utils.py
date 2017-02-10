@@ -112,15 +112,16 @@ def anyMovementKeyPressed():
     movementKeys = [sf.Keyboard.DOWN, sf.Keyboard.UP, sf.Keyboard.LEFT, sf.Keyboard.RIGHT]
     return any([sf.Keyboard.is_key_pressed(key) for key in movementKeys])
 
-def updateScrollDiff(dx, dy):
+def updateScrollDiff(dx, dy, dt):
+    diff = 50 * dt
     if sf.Keyboard.is_key_pressed(sf.Keyboard.DOWN):
-        dy += 1
+        dy += diff
     if sf.Keyboard.is_key_pressed(sf.Keyboard.UP):
-        dy -= 1
+        dy -= diff
     if sf.Keyboard.is_key_pressed(sf.Keyboard.LEFT):
-        dx -= 1
+        dx -= diff
     if sf.Keyboard.is_key_pressed(sf.Keyboard.RIGHT):
-        dx += 1
+        dx += diff
     return dx, dy
 
 

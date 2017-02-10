@@ -95,12 +95,6 @@ if __name__ == "__main__":
                     em.assignTargetToSelected(x, y)
 
 
-        if utils.anyMovementKeyPressed():
-            dx, dy = utils.updateScrollDiff(dx, dy)
-            utils.scrollViewKeys(viewWorld, dx, dy)
-        else:
-            dx, dy = 0, 0
-
         dt = clock.elapsed_time.seconds
         clock.restart()
 
@@ -122,6 +116,13 @@ if __name__ == "__main__":
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
 
+        # Scrolling Keyboard
+        if utils.anyMovementKeyPressed():
+            dx, dy = utils.updateScrollDiff(dx, dy, dt)
+            utils.scrollViewKeys(viewWorld, dx, dy)
+        else:
+            dx, dy = 0, 0
+        # Scrolling Mouse
         utils.scrollViewMouse(viewWorld, sf.Mouse.get_position(window).x, sf.Mouse.get_position(window).y)
 
         window.display()
