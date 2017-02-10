@@ -78,20 +78,18 @@ if __name__ == "__main__":
 
     while window.is_open:
         for event in window.events:
-            if type(event) is sf.CloseEvent:
+            if event.type == sf.Event.CLOSED:
                 window.close()
-            elif type(event) is sf.MouseButtonEvent:
-                if event.button == sf.Mouse.LEFT:
-                    #x, y = utils.view2world(window.view, event.position)
-                    x, y = textureWorld.map_pixel_to_coords(event.position)
+            elif event.type == sf.Event.MOUSE_BUTTON_PRESSED:
+                if event["button"] == sf.Mouse.LEFT:
+                    x, y = textureWorld.map_pixel_to_coords((event["x"], event["y"]))
                     fighter = em.fighterAt(x, y)
                     if fighter != None:
                         em.selectFighter(fighter)
                     else: # No fighter underneath mouse cursor
                         em.unselectFighters()
-                elif event.button == sf.Mouse.RIGHT:
-                    #x, y = utils.view2world(window.view, event.position)
-                    x, y = textureWorld.map_pixel_to_coords(event.position)
+                elif event["button"] == sf.Mouse.RIGHT:
+                    x, y = textureWorld.map_pixel_to_coords((event["x"], event["y"]))
                     em.assignTargetToSelected(x, y)
 
 
