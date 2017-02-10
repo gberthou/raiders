@@ -53,6 +53,7 @@ class DrawHealthBar(ecs.System):
 
     def update(self, em, eventManager, dt):
         allies = em.teamMembers(self.team)
+        zoom_factor = cst.WINDOW_WIDTH / self.view.size.x
 
         for e in em.getEntitiesWithComponents([comp.DrawableHUD, comp.Position, comp.Vulnerable]):
             if e.component(comp.Vulnerable).visibility == cst.BarVisibility.HIDDEN:
@@ -71,7 +72,7 @@ class DrawHealthBar(ecs.System):
 
             redbar = sf.RectangleShape()
             redbar.position = bar_position
-            redbar.size = (cst.BAR_WIDTH, cst.BAR_HEIGHT)
+            redbar.size = (cst.BAR_WIDTH * zoom_factor, cst.BAR_HEIGHT * zoom_factor)
             redbar.fill_color = sf.Color.RED
             redbar.outline_thickness = 1
             redbar.outline_color = sf.Color.BLACK
@@ -81,7 +82,7 @@ class DrawHealthBar(ecs.System):
             if hpratio != 0:
                 greenbar = sf.RectangleShape()
                 greenbar.position = bar_position
-                greenbar.size = (int(hpratio * cst.BAR_WIDTH), cst.BAR_HEIGHT)
+                greenbar.size = (hpratio * cst.BAR_WIDTH * zoom_factor, cst.BAR_HEIGHT * zoom_factor)
                 greenbar.fill_color = sf.Color.GREEN
 
                 self.window.draw(greenbar)
@@ -92,12 +93,15 @@ class DrawWeaponRange(ecs.System):
         self.view = view
 
     def update(self, em, eventManager, dt):
+        zoom_factor = cst.WINDOW_WIDTH / self.view.size.x
+
         for e in em.getEntitiesWithComponents([comp.DrawableHUD, comp.Position, comp.Fighter, comp.Weapon, comp.Selected]):
             pos = e.component(comp.Position)
-            pos = self.window.map_coords_to_pixel((pos.x, pos.y), self.view)
+            pos = self.window.map_coords_to_pixel((pos.x + .5 * cst.TILE_SIZE, pos.y + .5 * cst.TILE_SIZE), self.view)
             rangeCircle = sf.CircleShape()
-            rangeCircle.radius = e.component(comp.Weapon).atkRange
-            rangeCircle.position = (pos.x + 0.5*cst.TILE_SIZE - rangeCircle.radius, pos.y + 0.5*cst.TILE_SIZE - rangeCircle.radius)
+            rangeCircle.radius = e.component(comp.Weapon).atkRange * zoom_factor
+            rangeCircle.origin = (rangeCircle.radius, rangeCircle.radius)
+            rangeCircle.position = (pos.x, pos.y)
             rangeCircle.fill_color = sf.Color.TRANSPARENT
             rangeCircle.outline_thickness = 1
             rangeCircle.outline_color = sf.Color(0, 0, 0, 128)

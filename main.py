@@ -75,6 +75,7 @@ if __name__ == "__main__":
     tm = timeMachine.TimeMachine()
 
     dx, dy = 0, 0
+    zoom = 1
 
     while window.is_open:
         for event in window.events:
@@ -91,7 +92,11 @@ if __name__ == "__main__":
                 elif event["button"] == sf.Mouse.RIGHT:
                     x, y = textureWorld.map_pixel_to_coords((event["x"], event["y"]))
                     em.assignTargetToSelected(x, y)
-
+            elif event.type == sf.Event.MOUSE_WHEEL_SCROLLED:
+                zoom -= event["delta"] * cst.MOUSE_ZOOM
+                if zoom < cst.MIN_ZOOM:
+                    zoom = cst.MIN_ZOOM
+                viewWorld.size = (zoom * cst.WINDOW_WIDTH, zoom * cst.WINDOW_HEIGHT)
 
         dt = clock.elapsed_time.seconds
         clock.restart()
