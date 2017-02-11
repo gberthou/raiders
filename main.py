@@ -57,7 +57,7 @@ if __name__ == "__main__":
     app.addSystem(systems.PlayerAttack())
 
     facto = factory.Factory(em)
-    game_map = facto.createDefaultMap("assets/map.json")
+    game_map = facto.createDefaultMap("assets/map1.json")
 
     pelo = facto.createDefaultFighter()
     pelo.addComponent(comp.Leader())

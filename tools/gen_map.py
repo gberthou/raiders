@@ -19,6 +19,11 @@ else:
 
 towrite = "{\n"
 
+# Header
+towrite += "\t\"width\": %d,\n\t\"height\": %d,\n" % (width, height)
+
+# Tiles
+"""
 cols = []
 for i in range(0, width):
     temp = "\t\"%d\":\n\t\t{\n" % i
@@ -27,6 +32,16 @@ for i in range(0, width):
     cols.append(temp)
 
 towrite += ",\n".join(cols)
+"""
+
+tiles = [str(random.randint(1, 5)) for i in range(width * height)]
+towrite += "\t\"tiles\": [%s],\n" % (",".join(tiles))
+
+# Houses
+# Format: [house, house, house]
+# house = [housesetIndex, tileX, tileY]
+towrite += "\t\"houses\": [[0, 5, 10]]"
+
 towrite += "\n}"
 
 with open(opath, "w+") as f:

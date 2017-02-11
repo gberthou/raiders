@@ -16,13 +16,29 @@ class DrawMap(ecs.System):
 
     def update(self, em, eventManager, dt):
         tilemap = em.getEntitiesWithComponents([comp.DrawableMap])[0].component(comp.DrawableMap).surface
-        for w, heights in tilemap.items():
-            for h, tiletype in heights.items():
-                tile = sf.RectangleShape()
+        width  = tilemap["width"]
+        height = tilemap["height"]
+
+        tile = sf.RectangleShape()
+        for y in range(height):
+            for x in range(width):
                 tile.size = (cst.TILE_SIZE, cst.TILE_SIZE)
-                tile.position = (int(w) * cst.TILE_SIZE, int(h) * cst.TILE_SIZE)
-                tile.fill_color = assets.tileset[cst.TileType(tiletype)]
+                tile.position = (x * cst.TILE_SIZE, y * cst.TILE_SIZE)
+                tile.fill_color = assets.tileset[cst.TileType(tilemap["tiles"][x + y * width])]
                 self.window.draw(tile)
+
+        # House debug
+        for index, x, y in tilemap["houses"]:
+            for edge in assets.houseset[index]:
+                if utils.isHorizontal(edge):
+                    line = sf.RectangleShape((4, cst.TILE_SIZE))
+                    line.origin = (2, 0)
+                else:
+                    line = sf.RectangleShape((cst.TILE_SIZE, 4))
+                    line.origin = (0, 2)
+                line.fill_color = sf.Color(255, 255, 0)
+                line.position = ((x + edge[1][0]) * cst.TILE_SIZE, (y + edge[1][1]) * cst.TILE_SIZE)
+                self.window.draw(line)
 
 class DrawFighter(ecs.System):
     def __init__(self, window):
