@@ -38,12 +38,10 @@ class EntityManager:
         return [e for e in self.entities if [c for c in componentTypes if e.hasComponent(c)] == componentTypes]
 
 class EventManager:
-    def __init__(self):
-        pass
+    pass
 
 class Component:
-    def __init__(self):
-        pass
+    pass
 
 class ECSApp:
     def __init__(self, entityManager, eventManager):
