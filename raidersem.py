@@ -28,7 +28,7 @@ class RaidersEntityManager(ecs.EntityManager):
         tileY = int(y // cst.TILE_SIZE)
 
         selected = self.getEntitiesWithComponents([comp.Selected])
-        if len(selected) > 0:
+        if selected:
             selected = selected[0]
             if foe == None:
                 selected.removeComponent(comp.AttackTarget)
@@ -39,8 +39,11 @@ class RaidersEntityManager(ecs.EntityManager):
                 if not selected.hasComponent(comp.AttackTarget) or selected.component(comp.AttackTarget).target != foe:
                     selected.addComponent(comp.AttackTarget(foe, 1/selected.component(comp.Weapon).atkSpeed))
             # else <Friendly unit at (x,y)> : do nothing
-    
+
     def teamMembers(self, team):
-        return [e for e in self.getEntitiesWithComponents([comp.Fighter]) if e.component(comp.Fighter).team == team]
+        return  [e for e
+                in self.getEntitiesWithComponents([comp.Fighter])
+                if e.component(comp.Fighter).team == team
+                ]
 
 

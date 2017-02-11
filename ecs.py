@@ -8,12 +8,12 @@ class Entity:
     def removeComponent(self, componentType):
         try:
             del self.components[componentType]
-        except:
+        except KeyError:
             pass
 
     def component(self, componentType):
         return self.components[componentType]
-    
+
     def hasComponent(self, componentType):
         return componentType in self.components.keys()
 
@@ -55,8 +55,12 @@ class ECSApp:
         self.systems[type(system)] = system
 
     def updateSystem(self, systemType, dt):
-        if systemType in self.systems.keys():
-            self.systems[systemType].update(self.entityManager, self.eventManager, dt)
+        try:
+            system = self.systems[systemType]
+        except KeyError:
+            pass
+        else:
+            system.update(self.entityManager, self.eventManager, dt)
 
     def updateAll(self, dt):
         for systemType in self.systems.keys():

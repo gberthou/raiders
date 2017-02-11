@@ -36,7 +36,7 @@ class Factory:
         temp_map = None
         # TODO check for valid path & maybe extract this to utils method
         with open(path, "r") as f:
-            temp_map = json.loads(f.read())
+            temp_map = json.load(f)
 
         default_map.addComponent(comp.DrawableMap(temp_map))
         return default_map
