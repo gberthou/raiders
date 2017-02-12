@@ -40,7 +40,7 @@ towrite += "\t\"tiles\": [%s],\n" % (",".join(tiles))
 # Houses
 # Format: [house, house, house]
 # house = [housesetIndex, tileX, tileY]
-towrite += "\t\"houses\": [[0, 5, 10]]"
+towrite += "\t\"houses\": [[0, 5, 10], [1, 10, 5]]"
 
 towrite += "\n}"
 
