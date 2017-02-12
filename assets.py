@@ -1,3 +1,4 @@
+import copy
 import constants as cst
 
 from sfml import sf
@@ -12,24 +13,37 @@ tileset = {
         cst.TileType.ROAD       : sf.Color(193, 193, 193, 128)
 }
 
+class Wall:
+    def __init__(self, edge, isdoor = False):
+        self.edge    = edge
+        self.isdoor  = isdoor
+        self.active  = True
+
+    def copyWithOffset(self, x, y):
+        ret = copy.copy(self)
+        ret.edge = ((ret.edge[0][0]+x, ret.edge[0][1]+y),
+                    (ret.edge[1][0]+x, ret.edge[1][1]+y))
+        return ret
+
 houseset = [
     # House 0
     #  ___
     # |   |
     # |   |
-    # |_ _|
+    # |_o_|
     [
-        ((-1,0), (0,0)),
-        ((-1,1), (0,1)),
-        ((-1,2), (0,2)),
-        ((2,0), (3,0)),
-        ((2,1), (3,1)),
-        ((2,2), (3,2)),
-        ((0,-1), (0,0)),
-        ((1,-1), (1,0)),
-        ((2,-1), (2,0)),
-        ((0,2), (0,3)),
-        ((2,2), (2,3))
+        Wall(((-1,0), (0,0))),
+        Wall(((-1,1), (0,1))),
+        Wall(((-1,2), (0,2))),
+        Wall(((2,0), (3,0))),
+        Wall(((2,1), (3,1))),
+        Wall(((2,2), (3,2))),
+        Wall(((0,-1), (0,0))),
+        Wall(((1,-1), (1,0))),
+        Wall(((2,-1), (2,0))),
+        Wall(((0,2), (0,3))),
+        Wall(((2,2), (2,3))),
+        Wall(((1,2), (1,3)), True)
     ]
 ]
 

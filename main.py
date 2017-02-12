@@ -64,7 +64,7 @@ if __name__ == "__main__":
     foe.component(comp.Position).x = 320
     foe.component(comp.Fighter).team = 28
 
-    app.addSystem(systems.DrawMap(textureWorld))
+    app.addSystem(systems.DrawMap(textureWorld, mapObstacles))
     app.addSystem(sDF)
     app.addSystem(sDHB)
     app.addSystem(systems.DrawWeaponRange(textureHUD, viewWorld))

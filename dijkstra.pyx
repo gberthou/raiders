@@ -36,6 +36,9 @@ cdef dijkstra(area, mapObstacles, start, goal):
     
     distMap = {(startX, startY) : 0}
 
+    walls = (set([w.edge for w in mapObstacles.staticWalls])
+          |  set([w.edge for w in mapObstacles.dynamicWalls]))
+
     cdef dist_t distance, minDistance
     cdef long i 
     for i in range((x1-x0+1) * (y1-y0+1)):
@@ -58,9 +61,8 @@ cdef dijkstra(area, mapObstacles, start, goal):
             alt = minDistance + 1 + calcDistance(neighbor, goal) # A* like
             if neighbor not in distMap.keys() or alt < distMap[neighbor]:
                 e = edge(neighbor, minDistPoint)
-                if(neighbor not in mapObstacles.nodes
-                and e not in mapObstacles.staticEdges
-                and e not in mapObstacles.dynamicEdges):
+                if (neighbor not in mapObstacles.nodes
+                and e not in walls):
                     distMap[neighbor] = alt
                     prevMap[neighbor] = minDistPoint
     return prevMap

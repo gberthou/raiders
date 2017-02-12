@@ -138,8 +138,8 @@ def updateScrollDiff(dx, dy, dt):
     return dx, dy
 
 # Wall
-def isHorizontal(edge):
-    # Assumptions: all edge or either horizontal or vertical, not both
-    #              distance(edge[0], edge[1]) == 1
-    return edge[0][0] != edge[1][0]
+def isHorizontal(wall):
+    # Assumptions: all walls are either horizontal or vertical, not both
+    #              distance(wall.edge[0], wall.edge[1]) == 1
+    return wall.edge[0][0] != wall.edge[1][0]
 

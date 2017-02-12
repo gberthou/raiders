@@ -1,13 +1,18 @@
 import assets
+import copy
 
 class Obstacles:
     def __init__(self, mapDesc):
-        sEdges = []
+        sWalls = []
+        dWalls = []
         for index, x, y in mapDesc["houses"]:
-            for edge in assets.houseset[index]:
-                sEdges.append(((edge[0][0]+x, edge[0][1]+y),
-                               (edge[1][0]+x, edge[1][1]+y)))
+            for wall in assets.houseset[index]:
+                w = wall.copyWithOffset(x, y)
+                if w.isdoor:
+                    dWalls.append(w)
+                else:
+                    sWalls.append(w)
         
-        self.staticEdges = set(sEdges)
-        self.dynamicEdges = {}
+        self.staticWalls = set(sWalls)
+        self.dynamicWalls = set(dWalls)
         self.nodes = {}

@@ -11,8 +11,9 @@ from sfml import sf
 ### Graphics ###
 
 class DrawMap(ecs.System):
-    def __init__(self, window):
+    def __init__(self, window, mapObstacles):
         self.window = window
+        self.mapObstacles = mapObstacles
 
     def update(self, em, eventManager, dt):
         tilemap = em.getEntitiesWithComponents([comp.DrawableMap])[0].component(comp.DrawableMap).surface
@@ -28,17 +29,22 @@ class DrawMap(ecs.System):
                 self.window.draw(tile)
 
         # House debug
-        for index, x, y in tilemap["houses"]:
-            for edge in assets.houseset[index]:
-                if utils.isHorizontal(edge):
-                    line = sf.RectangleShape((4, cst.TILE_SIZE))
-                    line.origin = (2, 0)
-                else:
-                    line = sf.RectangleShape((cst.TILE_SIZE, 4))
-                    line.origin = (0, 2)
+        for wall in self.mapObstacles.staticWalls | self.mapObstacles.dynamicWalls:
+            if utils.isHorizontal(wall):
+                line = sf.RectangleShape((4, cst.TILE_SIZE))
+                line.origin = (2, 0)
+            else:
+                line = sf.RectangleShape((cst.TILE_SIZE, 4))
+                line.origin = (0, 2)
+
+            if wall.isdoor:
+                if not wall.active:
+                    continue
+                line.fill_color = sf.Color(255, 0, 255)
+            else:
                 line.fill_color = sf.Color(255, 255, 0)
-                line.position = ((x + edge[1][0]) * cst.TILE_SIZE, (y + edge[1][1]) * cst.TILE_SIZE)
-                self.window.draw(line)
+            line.position = (wall.edge[1][0] * cst.TILE_SIZE, wall.edge[1][1] * cst.TILE_SIZE)
+            self.window.draw(line)
 
 class DrawFighter(ecs.System):
     def __init__(self, window):
