@@ -188,8 +188,8 @@ class Teleportation(ecs.System):
             e.removeComponent(comp.Selected)
 
 class MovementAI(ecs.System):
-    def __init__(self):
-            pass
+    def __init__(self, mapObstacles):
+        self.mapObstacles = mapObstacles
 
     def update(self, em, eventManager, dt):
         for e in em.getEntitiesWithComponents([comp.Position, comp.MovementTarget, comp.Fighter]):
@@ -205,7 +205,7 @@ class MovementAI(ecs.System):
             else:
                 if not e.hasComponent(comp.Path):
                     area = (currentTile[0] - 30, currentTile[1] - 30, currentTile[0] + 30, currentTile[1] + 30)
-                    p = dijkstra.searchPath(area, {}, currentTile, targetTile)
+                    p = dijkstra.searchPath(area, self.mapObstacles, currentTile, targetTile)
                     if p == None: # No path found
                         e.removeComponent(comp.MovementTarget)
                         e.removeComponent(comp.Selected)

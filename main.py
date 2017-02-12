@@ -7,6 +7,7 @@ import factory
 import constants as cst
 import raidersem
 import timeMachine
+import obstacles
 import assets
 import resources
 import utils
@@ -48,16 +49,9 @@ if __name__ == "__main__":
     sDTHUD      = systems.DrawTeamHUD(textureHUD, rs)
     sDTHUD.team = 0
 
-    app.addSystem(systems.DrawMap(textureWorld))
-    app.addSystem(sDF)
-    app.addSystem(sDHB)
-    app.addSystem(systems.DrawWeaponRange(textureHUD, viewWorld))
-    app.addSystem(sDTHUD)
-    app.addSystem(systems.MovementAI())
-    app.addSystem(systems.PlayerAttack())
-
     facto = factory.Factory(em)
     game_map = facto.createDefaultMap("assets/map1.json")
+    mapObstacles = obstacles.Obstacles(game_map.component(comp.DrawableMap).surface)
 
     pelo = facto.createDefaultFighter()
     pelo.addComponent(comp.Leader())
@@ -69,7 +63,14 @@ if __name__ == "__main__":
     foe = facto.createDefaultFighter()
     foe.component(comp.Position).x = 320
     foe.component(comp.Fighter).team = 28
-    foe.component(comp.Vulnerable).currenthp = 75
+
+    app.addSystem(systems.DrawMap(textureWorld))
+    app.addSystem(sDF)
+    app.addSystem(sDHB)
+    app.addSystem(systems.DrawWeaponRange(textureHUD, viewWorld))
+    app.addSystem(sDTHUD)
+    app.addSystem(systems.MovementAI(mapObstacles))
+    app.addSystem(systems.PlayerAttack())
 
     clock = sf.Clock()
     tm = timeMachine.TimeMachine()

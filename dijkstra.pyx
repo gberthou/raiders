@@ -20,9 +20,12 @@ cdef dist_t calcDistance(p0, p1) except *:
     x1, y1 = p1
     return (x0 - x1)**2 + (y0 - y1)**2
 
+cdef edge(a, b):
+    return min((a,b), (b,a))
+
 # x1 > x0
 # y1 > y0
-cdef dijkstra(area, forbiddenPointSet, start, goal):
+cdef dijkstra(area, mapObstacles, start, goal):
     cdef coord_t x0, y0, x1, y1, startX, startY, goalX, goalY
 
     x0, y0, x1, y1 = area
@@ -51,19 +54,22 @@ cdef dijkstra(area, forbiddenPointSet, start, goal):
         for neighbor in neighborsOf(minDistPoint):
             if neighbor in visitedSet:
                 continue
-            # What does "alt" stands for ?
+            # What does "alt" stand for? -> alternative distance I guess
             alt = minDistance + 1 + calcDistance(neighbor, goal) # A* like
             if neighbor not in distMap.keys() or alt < distMap[neighbor]:
-                if neighbor not in forbiddenPointSet:
+                e = edge(neighbor, minDistPoint)
+                if(neighbor not in mapObstacles.nodes
+                and e not in mapObstacles.staticEdges
+                and e not in mapObstacles.dynamicEdges):
                     distMap[neighbor] = alt
                     prevMap[neighbor] = minDistPoint
     return prevMap
 
-def searchPath(area, forbiddenPointSet, start, goal):
+def searchPath(area, mapObstacles, start, goal):
     if start == goal:
         return [start]
     
-    prevMap = dijkstra(area, forbiddenPointSet, start, goal)
+    prevMap = dijkstra(area, mapObstacles, start, goal)
     if goal not in prevMap.keys(): # No path
         return None
 
