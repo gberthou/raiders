@@ -43,10 +43,14 @@ cdef dijkstra(area, mapObstacles, start, goal):
     cdef long i 
     for i in range((x1-x0+1) * (y1-y0+1)):
         minDistance = DIST_MAX
+        minDistPoint = None
         for point, distance in distMap.items():
             if distance < minDistance and (point not in visitedSet):
                 minDistance = distance
                 minDistPoint = point
+
+        if minDistPoint == None:
+            break
 
         if minDistPoint[0] == goalX and minDistPoint[1] == goalY: # Mathematical proof of correctness?
             break
