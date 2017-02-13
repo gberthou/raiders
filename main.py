@@ -85,6 +85,13 @@ if __name__ == "__main__":
             elif event.type == sf.Event.MOUSE_BUTTON_PRESSED:
                 if event["button"] == sf.Mouse.LEFT:
                     x, y = textureWorld.map_pixel_to_coords((event["x"], event["y"]))
+                    # First, check if door
+                    door = mapObstacles.doorAt(x, y)
+                    if door != None:
+                        door.active = not door.active
+                        continue
+
+                    # If not door, check if fighter
                     fighter = em.fighterAt(x, y)
                     if fighter != None:
                         em.selectFighter(fighter)
