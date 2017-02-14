@@ -13,6 +13,10 @@ class RaidersEntityManager(ecs.EntityManager):
                 return e
         return None
 
+    def hasAllyAtTile(self, tileX, tileY, team):
+        e = self.fighterAt(tileX * cst.TILE_SIZE, tileY * cst.TILE_SIZE)
+        return e != None and e.component(comp.Fighter).team == team
+
     def unselectFighters(self):
         for e in self.entities:
             e.removeComponent(comp.Selected)

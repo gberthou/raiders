@@ -87,7 +87,9 @@ if __name__ == "__main__":
                     x, y = textureWorld.map_pixel_to_coords((event["x"], event["y"]))
                     # First, check if door
                     door = mapObstacles.doorAt(x, y)
-                    if door != None:
+                    if  (door != None
+                    and (em.hasAllyAtTile(door.edge[0][0], door.edge[0][1], 0)
+                    or   em.hasAllyAtTile(door.edge[1][0], door.edge[1][1], 0))):
                         door.active = not door.active
                         continue
 
