@@ -1,7 +1,7 @@
 import ecs
 import components as comp
 import constants as cst
-from math import floor
+from math import floor, ceil
 
 from sfml import sf
 
@@ -143,3 +143,52 @@ def isHorizontal(wall):
     #              distance(wall.edge[0], wall.edge[1]) == 1
     return wall.edge[0][0] != wall.edge[1][0]
 
+# a = (xWorldA, yWorldA)
+# b = (xWorldB, yWorldB)
+# a and b are segment ends
+def edgesInSegment(a, b):
+    def computeN(x, dx):
+        n = x / cst.TILE_SIZE
+        if dx > 0:
+            n = ceil(n)
+        else:
+            n = floor(n)
+        return n
+
+    xA, yA = a
+    xB, yB = b
+
+    dx = xB - xA
+    dy = yB - yA
+
+    ret = []
+
+    # Vertical edges
+    if dx != 0:
+        n0 = computeN(xA, dx)
+        n1 = computeN(xB, -dx)
+
+        for x in range(min(n0,n1), max(n0,n1)+1):
+            k = (x * cst.TILE_SIZE - xA) / dx
+            # Align y on grid
+            y = int((yA + k * dy) // cst.TILE_SIZE)
+            ret.append(((x-1, y), (x, y)))
+    elif xA / cst.TILE_SIZE == floor(xA / cst.TILE_SIZE):
+        # TODO?
+        pass
+
+    # Horizontal edges
+    if dy != 0:
+        n0 = computeN(yA, dy)
+        n1 = computeN(yB, -dy)
+
+        for y in range(min(n0,n1), max(n0,n1)+1):
+            k = (y * cst.TILE_SIZE - yA) / dy
+            # Align x on grid
+            x = int((xA + k * dx) // cst.TILE_SIZE)
+            ret.append(((x, y-1), (x, y)))
+    elif yA / cst.TILE_SIZE== floor(yA / cst.TILE_SIZE):
+        # TODO?
+        pass
+
+    return ret

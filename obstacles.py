@@ -1,6 +1,7 @@
 import copy
 import utils
 import assets
+import components as comp
 import constants as cst
 
 class Obstacles:
@@ -32,3 +33,18 @@ class Obstacles:
             and dy >= -cst.DOOR_THICKNESS and dy < cst.DOOR_THICKNESS):
                 return wall
         return None
+
+    def activeEdges(self):
+        return (set([w.edge for w in self.staticWalls])
+              | set(w.edge for w in self.dynamicWalls if w.active))
+
+    def isReachable(self, selected, foe):
+        selectedPos = selected.component(comp.Position)
+        foePos      = foe.component(comp.Position)
+
+        edges = utils.edgesInSegment((selectedPos.x + cst.TILE_SIZE/2, selectedPos.y + cst.TILE_SIZE/2),
+                                     (foePos.x + cst.TILE_SIZE/2, foePos.y + cst.TILE_SIZE/2))
+
+        return len(set(edges).intersection(self.activeEdges())) == 0
+
+

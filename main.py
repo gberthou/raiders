@@ -101,7 +101,7 @@ if __name__ == "__main__":
                         em.unselectFighters()
                 elif event["button"] == sf.Mouse.RIGHT:
                     x, y = textureWorld.map_pixel_to_coords((event["x"], event["y"]))
-                    em.assignTargetToSelected(x, y)
+                    em.assignTargetToSelected(x, y, mapObstacles)
             elif event.type == sf.Event.MOUSE_WHEEL_SCROLLED:
                 zoom -= event["delta"] * cst.MOUSE_ZOOM
                 if zoom < cst.MIN_ZOOM:
