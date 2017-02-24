@@ -124,7 +124,7 @@ if __name__ == "__main__":
         textureWorld.display()
         textureHUD.display()
 
-        rs.fovShader.update(em, 0, tm, textureWorld)
+        rs.fovShader.update(em, 0, tm, mapObstacles, textureWorld)
 
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))

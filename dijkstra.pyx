@@ -36,7 +36,7 @@ cdef dijkstra(area, mapObstacles, start, goal):
     
     distMap = {(startX, startY) : 0}
 
-    walls = mapObstacles.activeEdges()
+    walls = set(w.edge for w in mapObstacles.activeEdges())
 
     cdef dist_t distance, minDistance
     cdef long i 

@@ -35,8 +35,8 @@ class Obstacles:
         return None
 
     def activeEdges(self):
-        return (set([w.edge for w in self.staticWalls])
-              | set(w.edge for w in self.dynamicWalls if w.active))
+        return (set(w for w in self.staticWalls)
+              | set(w for w in self.dynamicWalls if w.active))
 
     def isReachable(self, selected, foe):
         selectedPos = selected.component(comp.Position)
