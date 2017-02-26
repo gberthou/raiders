@@ -57,9 +57,9 @@ def canSee(eA, eB):
     return d2 <= (eA.component(comp.Fighter).fov + .5 * cst.TILE_SIZE)**2
 
 # Returns whether at least one among group can see eB
-def oneCanSee(group, eB):
+def oneCanSee(group, eB, mapObstacles):
     for i in group:
-        if canSee(i, eB):
+        if canSee(i, eB) and mapObstacles.isReachable(i, eB):
             return True
     return False
 

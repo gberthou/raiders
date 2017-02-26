@@ -45,6 +45,6 @@ class Obstacles:
         edges = utils.edgesInSegment((selectedPos.x + cst.TILE_SIZE/2, selectedPos.y + cst.TILE_SIZE/2),
                                      (foePos.x + cst.TILE_SIZE/2, foePos.y + cst.TILE_SIZE/2))
 
-        return len(set(edges).intersection(self.activeEdges())) == 0
+        return len(set(edges).intersection(set(e.edge for e in self.activeEdges()))) == 0
 
 

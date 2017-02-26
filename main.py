@@ -42,13 +42,6 @@ if __name__ == "__main__":
     eventManager  = ecs.EventManager()
     app = ecs.ECSApp(em, eventManager)
 
-    sDF         = systems.DrawFighter(textureWorld)
-    sDF.team    = 0
-    sDHB        = systems.DrawHealthBar(textureHUD, viewWorld)
-    sDHB.team   = 0
-    sDTHUD      = systems.DrawTeamHUD(textureHUD, rs)
-    sDTHUD.team = 0
-
     facto = factory.Factory(em)
     game_map = facto.createDefaultMap("assets/map1.json")
     mapObstacles = obstacles.Obstacles(game_map.component(comp.DrawableMap).surface)
@@ -63,6 +56,13 @@ if __name__ == "__main__":
     foe = facto.createDefaultFighter()
     foe.component(comp.Position).x = 320
     foe.component(comp.Fighter).team = 28
+    
+    sDF         = systems.DrawFighter(textureWorld, mapObstacles)
+    sDF.team    = 0
+    sDHB        = systems.DrawHealthBar(textureHUD, viewWorld, mapObstacles)
+    sDHB.team   = 0
+    sDTHUD      = systems.DrawTeamHUD(textureHUD, rs)
+    sDTHUD.team = 0
 
     app.addSystem(systems.DrawMap(textureWorld, mapObstacles))
     app.addSystem(sDF)

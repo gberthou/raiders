@@ -47,15 +47,16 @@ class DrawMap(ecs.System):
             self.window.draw(line)
 
 class DrawFighter(ecs.System):
-    def __init__(self, window):
+    def __init__(self, window, mapObstacles):
         self.window = window
+        self.mapObstacles = mapObstacles
         self.team = -1
 
     def update(self, em, eventManager, dt):
         allies = em.teamMembers(self.team)
 
         for e in em.getEntitiesWithComponents([comp.DrawableFighter, comp.Position, comp.Fighter]):
-            if e.component(comp.Fighter).team != self.team and not utils.oneCanSee(allies, e):
+            if e.component(comp.Fighter).team != self.team and not utils.oneCanSee(allies, e, self.mapObstacles):
                 continue
 
             pos = e.component(comp.Position)
@@ -68,10 +69,11 @@ class DrawFighter(ecs.System):
             self.window.draw(shape)
 
 class DrawHealthBar(ecs.System):
-    def __init__(self, window, view):
+    def __init__(self, window, view, mapObstacles):
         self.window = window
         self.view = view
         self.team = -1
+        self.mapObstacles = mapObstacles
 
     def update(self, em, eventManager, dt):
         allies = em.teamMembers(self.team)
@@ -80,7 +82,7 @@ class DrawHealthBar(ecs.System):
         for e in em.getEntitiesWithComponents([comp.DrawableHUD, comp.Position, comp.Vulnerable]):
             if e.component(comp.Vulnerable).visibility == cst.BarVisibility.HIDDEN:
                 continue
-            if e.component(comp.Fighter).team != self.team and not utils.oneCanSee(allies, e):
+            if e.component(comp.Fighter).team != self.team and not utils.oneCanSee(allies, e, self.mapObstacles):
                 continue
 
             # TODO: can divide by 0, handle with care
