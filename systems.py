@@ -2,7 +2,6 @@ import ecs
 import raidersem
 import components as comp
 import constants as cst
-import dijkstra
 import utils
 import assets
 
@@ -212,8 +211,7 @@ class MovementAI(ecs.System):
                 e.removeComponent(comp.Path)
             else:
                 if not e.hasComponent(comp.Path):
-                    area = (currentTile[0] - 30, currentTile[1] - 30, currentTile[0] + 30, currentTile[1] + 30)
-                    p = dijkstra.searchPath(area, self.mapObstacles, currentTile, targetTile)
+                    p = utils.pathToTile(e, targetTile, self.mapObstacles)
                     if p == None: # No path found
                         e.removeComponent(comp.MovementTarget)
                         e.removeComponent(comp.Selected)
