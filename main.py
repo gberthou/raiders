@@ -56,7 +56,7 @@ if __name__ == "__main__":
     foe = facto.createDefaultFighter()
     foe.component(comp.Position).x = 320
     foe.component(comp.Fighter).team = 28
-    
+
     sDF         = systems.DrawFighter(textureWorld, mapObstacles)
     sDF.team    = 0
     sDHB        = systems.DrawHealthBar(textureHUD, viewWorld, mapObstacles)
@@ -69,6 +69,7 @@ if __name__ == "__main__":
     app.addSystem(sDHB)
     app.addSystem(systems.DrawWeaponRange(textureHUD, viewWorld))
     app.addSystem(sDTHUD)
+    app.addSystem(systems.DrawFPS(textureHUD, rs))
     app.addSystem(systems.MovementAI(mapObstacles))
     app.addSystem(systems.PlayerAttack())
 

@@ -21,8 +21,11 @@ class DrawMap(ecs.System):
         height = tilemap["height"]
 
         tile = sf.RectangleShape()
-        for y in range(height):
-            for x in range(width):
+        vlx, vly = self.window.map_pixel_to_coords((0, 0))
+        vhx, vhy = self.window.map_pixel_to_coords((cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT))
+
+        for y in range(max(0, int(vly/cst.TILE_SIZE)), min(height, int(vhy/cst.TILE_SIZE)+1)):
+            for x in range(max(0, int(vlx/cst.TILE_SIZE)), min(width, int(vhx/cst.TILE_SIZE)+1)):
                 tile.size = (cst.TILE_SIZE, cst.TILE_SIZE)
                 tile.position = (x * cst.TILE_SIZE, y * cst.TILE_SIZE)
                 tile.fill_color = assets.tileset[cst.TileType(tilemap["tiles"][x + y * width])]
@@ -140,7 +143,7 @@ class DrawTeamHUD(ecs.System):
 
     def update(self, em, eventManager, dt):
         allies = em.teamMembers(self.team)
-        
+
         leaderPortrait = sf.RectangleShape((cst.PORTRAIT_LEADER_SIZE, cst.PORTRAIT_LEADER_SIZE))
         leaderPortrait.origin = (0, cst.PORTRAIT_LEADER_SIZE)
         leaderPortrait.position = (cst.PORTRAIT_X_MARGIN, cst.WINDOW_HEIGHT - cst.PORTRAIT_Y_MARGIN)
@@ -158,9 +161,9 @@ class DrawTeamHUD(ecs.System):
             text.origin = (text.global_bounds.width / 2, text.global_bounds.height / 2)
             text.position = (leaderPortrait.position.x + cst.PORTRAIT_LEADER_SIZE / 2, leaderPortrait.position.y - cst.PORTRAIT_LEADER_SIZE / 2)
             self.window.draw(text)
-            
+
             allies.remove(leader[0])
-        
+
         text.character_size = 16
 
         for i in range(cst.MAX_TEAM_SIZE - 1):
@@ -172,18 +175,47 @@ class DrawTeamHUD(ecs.System):
                 portrait.fill_color = sf.Color(128, 128, 128)
 
             self.window.draw(portrait)
-            
+
             if not emptySlot:
                 text.string = allies[i].component(comp.Fighter).name[0]
                 text.origin = (text.global_bounds.width / 2, text.global_bounds.height / 2)
                 text.position = (portrait.position.x + cst.PORTRAIT_NORMAL_SIZE / 2, portrait.position.y - cst.PORTRAIT_NORMAL_SIZE / 2)
                 self.window.draw(text)
 
+class DrawFPS(ecs.System):
+    def __init__(self, window, rs):
+        self.window = window
+        self.rs = rs
+        self.sum_dt = 0
+        self.num_dt = 0
+        self.old_fps = "60"
+
+    def update(self, em, eventManager, dt):
+        self.sum_dt += dt
+        self.num_dt += 1
+
+        fps = sf.Text()
+        fps.font = self.rs.font
+        fps.character_size = 16
+        fps.color = sf.Color.RED
+
+        if self.sum_dt < 0.5:
+            fps.string = self.old_fps
+        else:
+            self.old_fps = str(int(self.num_dt/self.sum_dt))
+            self.sum_dt, self.num_dt = 0, 0
+            fps.string = self.old_fps
+
+        fps.origin = (fps.global_bounds.width, 0)
+        fps.position = (cst.WINDOW_WIDTH - cst.HUD_MARGIN, cst.HUD_MARGIN)
+        self.window.draw(fps)
+
 ### Core ###
 
 class Teleportation(ecs.System):
+
     def __init__(self):
-            pass
+        pass
 
     def update(self, em, eventManager, dt):
         for e in em.getEntitiesWithComponents([comp.Position, comp.MovementTarget]):
