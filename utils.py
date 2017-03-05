@@ -1,6 +1,7 @@
 import ecs
 import components as comp
 import constants as cst
+import dijkstra
 from math import floor, ceil
 
 from sfml import sf
@@ -84,6 +85,12 @@ def closestTileInRange(posWorld, targetWorld, rang):
 
     delta = (floorTowardsZero(vector[0] * factor), floorTowardsZero(vector[1] * factor))
     return (t[0] + delta[0], t[1] + delta[1])
+
+def pathToTile(entity, targetTile, mapObstacles):
+    pos = entity.component(comp.Position)
+    currentTile = world2grid((pos.x, pos.y))
+    area = (currentTile[0] - 30, currentTile[1] - 30, currentTile[0] + 30, currentTile[1] + 30)
+    return dijkstra.searchPath(area, mapObstacles, currentTile, targetTile)
 
 # Scrolling
 

@@ -36,7 +36,7 @@ class RaidersEntityManager(ecs.EntityManager):
             selected = selected[0]
             if foe == None:
                 selected.removeComponent(comp.AttackTarget)
-                if not selected.hasComponent(comp.MovementTarget) or selected.component(comp.MovementTarget).target != (tileX, tileY):
+                if not selected.hasComponent(comp.MovementTarget) or selected.component(comp.MovementTarget).target != (tileX, tileY) and utils.pathToTile(selected, (tileX, tileY), mapObstacles):
                     selected.removeComponent(comp.Path)
                     selected.addComponent(comp.MovementTarget((tileX, tileY)))
             elif utils.areFoes(selected, foe):
