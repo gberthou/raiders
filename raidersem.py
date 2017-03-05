@@ -34,15 +34,16 @@ class RaidersEntityManager(ecs.EntityManager):
         selected = self.getEntitiesWithComponents([comp.Selected])
         if selected:
             selected = selected[0]
-            if foe == None:
+            if foe == None or not utils.oneCanSee([selected], foe, mapObstacles):
                 selected.removeComponent(comp.AttackTarget)
                 if not selected.hasComponent(comp.MovementTarget) or selected.component(comp.MovementTarget).target != (tileX, tileY) and utils.pathToTile(selected, (tileX, tileY), mapObstacles):
                     selected.removeComponent(comp.Path)
                     selected.addComponent(comp.MovementTarget((tileX, tileY)))
             elif utils.areFoes(selected, foe):
                 if not selected.hasComponent(comp.AttackTarget) or selected.component(comp.AttackTarget).target != foe:
-                    if mapObstacles.isReachable(selected, foe):
-                        selected.addComponent(comp.AttackTarget(foe, 1/selected.component(comp.Weapon).atkSpeed))
+                    # Here we know that the foe is reachable
+                    selected.addComponent(comp.AttackTarget(foe, 1/selected.component(comp.Weapon).atkSpeed))
+
             # else <Friendly unit at (x,y)> : do nothing
 
     def teamMembers(self, team):
