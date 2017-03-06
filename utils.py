@@ -177,6 +177,8 @@ def edgesInSegment(a, b):
 
         for x in range(min(n0,n1), max(n0,n1)+1):
             k = (x * cst.TILE_SIZE - xA) / dx
+            if k < 0 or k > 1:
+                continue
             # Align y on grid
             y = int((yA + k * dy) // cst.TILE_SIZE)
             ret.append(((x-1, y), (x, y)))
@@ -191,6 +193,8 @@ def edgesInSegment(a, b):
 
         for y in range(min(n0,n1), max(n0,n1)+1):
             k = (y * cst.TILE_SIZE - yA) / dy
+            if k < 0 or k > 1:
+                continue
             # Align x on grid
             x = int((xA + k * dx) // cst.TILE_SIZE)
             ret.append(((x, y-1), (x, y)))
