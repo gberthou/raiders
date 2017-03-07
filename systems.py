@@ -198,12 +198,10 @@ class DrawFPS(ecs.System):
         fps.character_size = 16
         fps.color = sf.Color.RED
 
-        if self.sum_dt < 0.5:
-            fps.string = self.old_fps
-        else:
+        if self.sum_dt >= 0.5:
             self.old_fps = str(int(self.num_dt/self.sum_dt))
             self.sum_dt, self.num_dt = 0, 0
-            fps.string = self.old_fps
+        fps.string = self.old_fps
 
         fps.origin = (fps.global_bounds.width, 0)
         fps.position = (cst.WINDOW_WIDTH - cst.HUD_MARGIN, cst.HUD_MARGIN)

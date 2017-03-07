@@ -14,6 +14,14 @@ import utils
 
 from sfml import sf
 
+def pauseNextState(pause, ev):
+    if ((pause & 1) and not ev) or (ev and not (pause & 1)):
+        return (pause+1)%4
+    return pause
+
+def isPaused(pause):
+    return pause == 1 or pause == 2
+
 if __name__ == "__main__":
     window = sf.RenderWindow(sf.VideoMode(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT), "Raiders")
     window.vertical_synchronization = True
@@ -78,6 +86,7 @@ if __name__ == "__main__":
 
     dx, dy = 0, 0
     zoom = 1
+    pause = 0
 
     while window.is_open:
         for event in window.events:
@@ -109,7 +118,21 @@ if __name__ == "__main__":
                     zoom = cst.MIN_ZOOM
                 viewWorld.size = (zoom * cst.WINDOW_WIDTH, zoom * cst.WINDOW_HEIGHT)
 
-        dt = clock.elapsed_time.seconds
+        pause = pauseNextState(pause, utils.pauseKeyPressed())
+
+        # Scrolling Keyboard
+        if utils.anyMovementKeyPressed():
+            dx, dy = utils.updateScrollDiff(dx, dy, dt)
+            utils.scrollViewKeys(viewWorld, dx, dy)
+        else:
+            dx, dy = 0, 0
+        # Scrolling Mouse
+        utils.scrollViewMouse(viewWorld, sf.Mouse.get_position(window).x, sf.Mouse.get_position(window).y)
+
+        if isPaused(pause):
+            dt = 0
+        else:
+            dt = clock.elapsed_time.seconds
         clock.restart()
 
         window.clear()
@@ -119,6 +142,7 @@ if __name__ == "__main__":
         states = sf.RenderStates()
         states.shader = rs.fovShader.shader
 
+        # TODO: Update only display related systems when paused
         app.updateAll(dt)
         tm.update(dt)
 
@@ -130,14 +154,15 @@ if __name__ == "__main__":
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
 
-        # Scrolling Keyboard
-        if utils.anyMovementKeyPressed():
-            dx, dy = utils.updateScrollDiff(dx, dy, dt)
-            utils.scrollViewKeys(viewWorld, dx, dy)
-        else:
-            dx, dy = 0, 0
-        # Scrolling Mouse
-        utils.scrollViewMouse(viewWorld, sf.Mouse.get_position(window).x, sf.Mouse.get_position(window).y)
+        if isPaused(pause):
+            text = sf.Text()
+            text.font = rs.font
+            text.character_size = 30
+            text.color = sf.Color(128, 128, 128)
+            text.string = "PAUSED - Press P to resume"
+            text.origin = (text.global_bounds.width/2, text.global_bounds.height/2)
+            text.position = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
+            window.draw(text)
 
         window.display()
 
