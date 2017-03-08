@@ -39,6 +39,9 @@ def norm(vec):
     return norm2(vec) ** .5
 
 # Combat
+def areTeamsHostile(teamA, teamB):
+    # TODO: Manage neutral/friendly factions
+    return teamA != teamB
 
 def effectiveDmg(friend, foe):
     armor = foe.component(comp.Armor).defense if foe.hasComponent(comp.Armor) else 0
@@ -46,8 +49,7 @@ def effectiveDmg(friend, foe):
     return effectiveDmg
 
 def areFoes(fighterA, fighterB):
-    # TODO: Manage neutral/friendly factions
-    return fighterA.component(comp.Fighter).team != fighterB.component(comp.Fighter).team
+    return areTeamsHostile(fighterA.component(comp.Fighter).team, fighterB.component(comp.Fighter).team)
 
 # Returns whether eA can see eB
 def canSee(eA, eB):

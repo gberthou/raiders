@@ -88,6 +88,8 @@ if __name__ == "__main__":
     zoom = 1
     pause = 0
 
+    oldVisibleEnnemies = set()
+
     while window.is_open:
         for event in window.events:
             if event.type == sf.Event.CLOSED:
@@ -133,6 +135,12 @@ if __name__ == "__main__":
             dt = 0
         else:
             dt = clock.elapsed_time.seconds
+            visibleEnnemies = em.visibleEnnemies(0, mapObstacles)
+            if visibleEnnemies - oldVisibleEnnemies: # New ennemies spotted
+                pause = 1
+                dt = 0
+            oldVisibleEnnemies = visibleEnnemies
+
         clock.restart()
 
         window.clear()

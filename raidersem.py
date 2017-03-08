@@ -52,4 +52,7 @@ class RaidersEntityManager(ecs.EntityManager):
                 if e.component(comp.Fighter).team == team
                 ]
 
-
+    def visibleEnnemies(self, team, mapObstacles):
+        allies = self.teamMembers(team)
+        return set(e for e in self.getEntitiesWithComponents([comp.Fighter])
+                   if utils.areTeamsHostile(team, e.component(comp.Fighter).team) and utils.oneCanSee(allies, e, mapObstacles))
