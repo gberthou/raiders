@@ -14,13 +14,15 @@ import utils
 
 from sfml import sf
 
-def pauseNextState(pause, ev):
-    if ((pause & 1) and not ev) or (ev and not (pause & 1)):
-        return (pause+1)%4
-    return pause
-
-def isPaused(pause):
-    return pause == 1 or pause == 2
+def drawPause(window, rs):
+    text = sf.Text()
+    text.font = rs.font
+    text.character_size = 30
+    text.color = sf.Color(128, 128, 128)
+    text.string = "PAUSED - Press P to resume"
+    text.origin = (text.global_bounds.width/2, text.global_bounds.height/2)
+    text.position = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
+    window.draw(text)
 
 def drawMap(window, rs):
     quad = sf.VertexArray(sf.PrimitiveType.QUADS, 4)
@@ -110,7 +112,8 @@ if __name__ == "__main__":
 
     dx, dy = 0, 0
     zoom = 1
-    pause = 0
+    pauseToggle = utils.ToggleButton()
+    mapToggle   = utils.ToggleButton()
 
     oldVisibleEnnemies = set()
 
@@ -144,7 +147,8 @@ if __name__ == "__main__":
                     zoom = cst.MIN_ZOOM
                 viewWorld.size = (zoom * cst.WINDOW_WIDTH, zoom * cst.WINDOW_HEIGHT)
 
-        pause = pauseNextState(pause, utils.pauseKeyPressed())
+        pauseToggle.nextState(utils.pauseKeyPressed())
+        mapToggle.nextState(utils.mapKeyPressed())
 
         # Scrolling Keyboard
         if utils.anyMovementKeyPressed():
@@ -155,13 +159,13 @@ if __name__ == "__main__":
         # Scrolling Mouse
         utils.scrollViewMouse(viewWorld, sf.Mouse.get_position(window).x, sf.Mouse.get_position(window).y)
 
-        if isPaused(pause):
+        if pauseToggle.isActivated() or mapToggle.isActivated():
             dt = 0
         else:
             dt = clock.elapsed_time.seconds
             visibleEnnemies = em.visibleEnnemies(0, mapObstacles)
             if visibleEnnemies - oldVisibleEnnemies: # New ennemies spotted
-                pause = 1
+                pauseToggle.state = 1
                 dt = 0
             oldVisibleEnnemies = visibleEnnemies
 
@@ -186,17 +190,10 @@ if __name__ == "__main__":
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
 
-        if isPaused(pause):
-            text = sf.Text()
-            text.font = rs.font
-            text.character_size = 30
-            text.color = sf.Color(128, 128, 128)
-            text.string = "PAUSED - Press P to resume"
-            text.origin = (text.global_bounds.width/2, text.global_bounds.height/2)
-            text.position = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
-            window.draw(text)
-
-        drawMap(window, rs)
+        if mapToggle.isActivated():
+            drawMap(window, rs)
+        elif pauseToggle.isActivated():
+            drawPause(window, rs)
 
         window.display()
 

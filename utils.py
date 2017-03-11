@@ -129,6 +129,9 @@ def anyMovementKeyPressed():
 def pauseKeyPressed():
     return sf.Keyboard.is_key_pressed(sf.Keyboard.P)
 
+def mapKeyPressed():
+    return sf.Keyboard.is_key_pressed(sf.Keyboard.M)
+
 def updateScrollDiff(dx, dy, dt):
     diff = 8 * dt
     if sf.Keyboard.is_key_pressed(sf.Keyboard.DOWN):
@@ -213,3 +216,15 @@ def edgesInSegment(a, b):
         pass
 
     return ret
+
+# User input
+class ToggleButton:
+    def __init__(self):
+        self.state = 0
+
+    def nextState(self, ev):
+        if (self.state & 1) ^ ev:
+            self.state = (self.state+1)%4
+
+    def isActivated(self):
+        return self.state == 1 or self.state == 2
