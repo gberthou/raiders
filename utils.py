@@ -3,8 +3,13 @@ import components as comp
 import constants as cst
 import dijkstra
 from math import floor, ceil
+import json
 
 from sfml import sf
+
+def loadMapJSON(path):
+    with open(path, "r") as f:
+        return json.load(f)
 
 # Math
 
@@ -106,8 +111,8 @@ def scrollViewMouse(view, xm, ym):
         return
     # TODO handle mouse acceleration factor
     factor = 0.02
-    xm_center = xm - view.center.x
-    ym_center = ym - view.center.y
+    xm_center = xm - cst.WINDOW_WIDTH / 2
+    ym_center = ym - cst.WINDOW_HEIGHT / 2
     view.center = (view.center.x + factor * xm_center , view.center.y + factor * ym_center)
 
 def scrollViewKeys(view, dx, dy):

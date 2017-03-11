@@ -1,4 +1,5 @@
 from enum import Enum
+from sfml import sf
 
 BarVisibility = Enum("BarVisibility", "VISIBLE DAMAGED HIDDEN")
 TileType = Enum("TileType", [
@@ -43,3 +44,13 @@ DAY_LUM_MAX  = 0.9
 # Zoom
 MOUSE_ZOOM = 0.5
 MIN_ZOOM   = 0.1
+
+# Map
+MAP_PALETTE = [sf.Color(64, 64, 255),
+               sf.Color(255, 255, 128),
+               sf.Color(255, 128, 64),
+               sf.Color(0, 255, 64),
+               sf.Color(192, 192, 192)]
+
+MAP_WIDTH  = 500
+MAP_HEIGHT = 500

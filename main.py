@@ -22,6 +22,26 @@ def pauseNextState(pause, ev):
 def isPaused(pause):
     return pause == 1 or pause == 2
 
+def drawMap(window, rs):
+    quad = sf.VertexArray(sf.PrimitiveType.QUADS, 4)
+
+    x = (cst.WINDOW_WIDTH - cst.MAP_WIDTH) / 2
+    y = (cst.WINDOW_HEIGHT - cst.MAP_HEIGHT) / 2
+    quad[0].position = (x, y)
+    quad[1].position = (x + cst.MAP_WIDTH, y)
+    quad[2].position = (x + cst.MAP_WIDTH, y + cst.MAP_HEIGHT)
+    quad[3].position = (x, y + cst.MAP_HEIGHT)
+
+    quad[0].tex_coords = (0, 1)
+    quad[1].tex_coords = (1, 1)
+    quad[2].tex_coords = (1, 0)
+    quad[3].tex_coords = (0, 0)
+
+    states = sf.RenderStates()
+    states.shader = rs.mapShader.shader
+
+    window.draw(quad, states)
+
 if __name__ == "__main__":
     window = sf.RenderWindow(sf.VideoMode(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT), "Raiders")
     window.vertical_synchronization = True
@@ -34,6 +54,7 @@ if __name__ == "__main__":
 
     textureWorld = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
     textureHUD   = sf.RenderTexture(cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT)
+    textureMap   = sf.RenderTexture(cst.MAP_WIDTH, cst.MAP_HEIGHT)
 
     viewWorld = sf.View()
     viewWorld.center = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
@@ -44,15 +65,18 @@ if __name__ == "__main__":
         print("No shader, no game :(", file=sys.stderr)
         sys.exit(1)
 
-    rs = resources.Resources()
+    mapData = utils.loadMapJSON("assets/map2.json")
+
+    rs = resources.Resources(mapData)
 
     em = raidersem.RaidersEntityManager()
     eventManager  = ecs.EventManager()
     app = ecs.ECSApp(em, eventManager)
 
+    mapObstacles = obstacles.Obstacles(mapData)
+
     facto = factory.Factory(em)
-    game_map = facto.createDefaultMap("assets/map1.json")
-    mapObstacles = obstacles.Obstacles(game_map.component(comp.DrawableMap).surface)
+    game_map = facto.createDefaultMap(mapData)
 
     pelo = facto.createDefaultFighter()
     pelo.addComponent(comp.Leader())
@@ -171,6 +195,8 @@ if __name__ == "__main__":
             text.origin = (text.global_bounds.width/2, text.global_bounds.height/2)
             text.position = (cst.WINDOW_WIDTH/2, cst.WINDOW_HEIGHT/2)
             window.draw(text)
+
+        drawMap(window, rs)
 
         window.display()
 

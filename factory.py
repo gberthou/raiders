@@ -2,8 +2,6 @@ import ecs
 import components as comp
 import constants as cst
 
-import json
-
 from sfml import sf
 
 class Factory:
@@ -30,15 +28,8 @@ class Factory:
         fighter.addComponent(comp.DrawableHUD(None))
         return fighter
 
-    def createDefaultMap(self, path):
+    def createDefaultMap(self, mapData):
         default_map = self.em.createEntity()
-
-        temp_map = None
-        # TODO check for valid path & maybe extract this to utils method
-        with open(path, "r") as f:
-            temp_map = json.load(f)
-
-        default_map.addComponent(comp.DrawableMap(temp_map))
+        default_map.addComponent(comp.DrawableMap(mapData))
         return default_map
-
 

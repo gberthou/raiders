@@ -2,7 +2,8 @@ from sfml import sf
 import shader
 
 class Resources:
-    def __init__(self):
+    def __init__(self, mapData):
         self.font = sf.Font.from_file("resources/arial.ttf")
-        self.fovShader = shader.FieldOfViewShader("resources/shader.frag")
+        self.fovShader = shader.FieldOfViewShader("resources/fov.frag")
+        self.mapShader = shader.MapShader("resources/map.frag", mapData)
 

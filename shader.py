@@ -70,3 +70,21 @@ class FieldOfViewShader:
         for i in range(len(edges), FOV_SHADER_RANGE_COUNT):
             self.shader.set_parameter("edges[%d]" % i, sf.Color(0, 0, 0, 0))
 
+class MapShader:
+    def __init__(self, filename, mapData):
+        domains = mapData["domains"]
+        if len(domains) > 64:
+            raise Exception("MapShader: too many domains (%d)" % len(domains))
+
+        if len(cst.MAP_PALETTE) > 8:
+            raise Exception("MapShader: too many palette colors (%d)" % len(domains))
+
+        self.shader = sf.Shader.from_file(fragment = filename)
+
+        self.shader.set_parameter("domainCount", len(domains))
+        for i, domain in enumerate(domains):
+            self.shader.set_parameter("domainPositions[%d]" % i, domain[0] / mapData["width"], domain[1] / mapData["height"], domain[2])
+
+        for i, color in enumerate(cst.MAP_PALETTE):
+            self.shader.set_parameter("palette[%d]" % i, color)
+
