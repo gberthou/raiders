@@ -98,7 +98,7 @@ if __name__ == "__main__":
     sDTHUD      = systems.DrawTeamHUD(textureHUD, rs)
     sDTHUD.team = 0
 
-    app.addSystem(systems.DrawMap(textureWorld, mapObstacles))
+    app.addSystem(systems.DrawMap(textureWorld, mapObstacles, rs))
     app.addSystem(sDF)
     app.addSystem(sDHB)
     app.addSystem(systems.DrawWeaponRange(textureHUD, viewWorld))

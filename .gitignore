@@ -11,3 +11,4 @@ build
 cython_debug
 *.so
 dijkstra.c
+compiled.c

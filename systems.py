@@ -4,15 +4,17 @@ import components as comp
 import constants as cst
 import utils
 import assets
+import compiled
 
 from sfml import sf
 
 ### Graphics ###
 
 class DrawMap(ecs.System):
-    def __init__(self, window, mapObstacles):
+    def __init__(self, window, mapObstacles, rs):
         self.window = window
         self.mapObstacles = mapObstacles
+        self.rs = rs
 
     def update(self, em, eventManager, dt):
         tilemap = em.getEntitiesWithComponents([comp.DrawableMap])[0].component(comp.DrawableMap).surface
@@ -22,13 +24,20 @@ class DrawMap(ecs.System):
         tile = sf.RectangleShape()
         vlx, vly = self.window.map_pixel_to_coords((0, 0))
         vhx, vhy = self.window.map_pixel_to_coords((cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT))
+    
+        x0 = max(0, int(vlx/cst.TILE_SIZE))
+        x1 = min(width, int(vhx/cst.TILE_SIZE) + 1)
+        y0 = max(0, int(vly/cst.TILE_SIZE))
+        y1 = min(height, int(vhy/cst.TILE_SIZE) + 1)
 
-        for y in range(max(0, int(vly/cst.TILE_SIZE)), min(height, int(vhy/cst.TILE_SIZE)+1)):
-            for x in range(max(0, int(vlx/cst.TILE_SIZE)), min(width, int(vhx/cst.TILE_SIZE)+1)):
-                tile.size = (cst.TILE_SIZE, cst.TILE_SIZE)
-                tile.position = (x * cst.TILE_SIZE, y * cst.TILE_SIZE)
-                tile.fill_color = assets.tileset[cst.TileType(tilemap["tiles"][x + y * width])]
-                self.window.draw(tile)
+        quads = compiled.visibleMapVertexArray(x0, x1, y0, y1, width, tilemap)
+        if not quads:
+            return
+
+        states = sf.RenderStates()
+        states.texture = self.rs.tileset.texture
+
+        self.window.draw(quads, states)
 
         # House debug
         for wall in self.mapObstacles.staticWalls | self.mapObstacles.dynamicWalls:
