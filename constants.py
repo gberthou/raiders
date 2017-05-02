@@ -7,7 +7,8 @@ TileType = Enum("TileType", [
     ("FOREST", 2),
     ("MOUNTAIN", 3),
     ("WATER", 4),
-    ("ROAD", 5)
+    ("ROAD", 5),
+    ("DEBUG", 6)
     ])
 
 TILE_SIZE = 32
