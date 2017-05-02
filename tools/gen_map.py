@@ -13,7 +13,7 @@ NOISE_NODE_COUNT = 40
 WATER_LEVEL = 0.2
 MOUNTAIN_SLOPE = 0.1
 
-DOMAIN_SPACE = 80
+DOMAIN_SPACE = 10
 DOMAIN_PROBA = 0.3
 
 FACTION_COUNT = 2
@@ -30,12 +30,15 @@ else:
     exit(1)
 
 
-# Generate map
+# Create noise
 mn = noise.MyNoise(1, 1, NOISE_NODE_COUNT)
-t = [[mn.at(x/width, y/height) for x in range(width)] for y in range(height)] 
+
+# Debug display
+t = [[mn.at(x/100, y/100) for x in range(101)] for y in range(101)] 
 plt.imshow(t, interpolation="nearest")
 plt.show()
 
+# Generate map
 tiles = [0] * (width * height)
 for y in range(height):
     for x in range(width):
@@ -57,6 +60,7 @@ for y in range(height):
 #tiles = [str(random.randint(1, 5)) for i in range(width * height)]
 
 domains = []
+"""
 for y in range(height//DOMAIN_SPACE):
     for x in range(width//DOMAIN_SPACE):
         if random.random() < DOMAIN_PROBA:
@@ -64,6 +68,20 @@ for y in range(height//DOMAIN_SPACE):
             b = (y + random.random()) * DOMAIN_SPACE
             faction = random.randrange(FACTION_COUNT)
             domains.append([a, b, faction])
+"""
+# Create domains. Domain center is a local extremum
+for y in range(DOMAIN_SPACE):
+    for x in range(DOMAIN_SPACE):
+        extremum = mn.localExtremum(x / DOMAIN_SPACE, y / DOMAIN_SPACE)
+        extremum = (width * extremum[0], height * extremum[1])
+        # Keep extremum only if not registered yet
+        if sum([noise.d2(extremum, (i[0], i[1]))<1 for i in domains]) == 0:
+            faction = random.randrange(FACTION_COUNT)
+            domains.append([extremum[0], extremum[1], faction])
+
+# Remove random domains if they are too numerous
+while len(domains) > 64:
+    del domains[random.randint(0, len(domains))]
 
 towrite = "{\n"
 

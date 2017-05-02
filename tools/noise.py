@@ -41,6 +41,41 @@ class MyNoise:
         df_dy = (self.at(x, y + H/2) - self.at(x, y - H/2)) / H
         return (df_dx, df_dy)
 
+    def normalizedSlopeAt(self, x, y):
+        slope = self.slopeAt(x, y)
+        l_slope = sqrt(d2((0, 0), slope))
+        return (slope[0] / l_slope, slope[1] / l_slope)
+
+    def localExtremum(self, x, y):
+        DELTA = 1e-3
+        pos_min = (x, y)
+        pos_max = (x, y)
+
+        current_min = self.at(x, y)
+        current_max = current_min
+
+        for i in range(1000):
+            slope_min = self.normalizedSlopeAt(pos_min[0], pos_min[1])
+            proposal_min = (pos_min[0] - DELTA * slope_min[0], pos_min[1] - DELTA * slope_min[1])
+            proposal_value = self.at(proposal_min[0], proposal_min[1])
+            if proposal_value >= current_min:
+                break
+            current_min = proposal_value
+            pos_min = proposal_min
+
+        for i in range(1000):
+            slope_max = self.normalizedSlopeAt(pos_max[0], pos_max[1])
+            proposal_max = (pos_max[0] + DELTA * slope_max[0], pos_max[1] + DELTA * slope_max[1])
+            proposal_value = self.at(proposal_max[0], proposal_max[1])
+            if proposal_value <= current_max:
+                break
+            current_max = proposal_value
+            pos_max = proposal_max
+
+        if d2((x, y), pos_min) < d2((x, y), pos_max):
+            return pos_min
+        return pos_max
+
 class PerlinNoise:
     def __init__(self, w, h):
         self.w = w
