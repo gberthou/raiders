@@ -83,7 +83,7 @@ class MapShader:
 
         self.shader.set_parameter("domainCount", len(domains))
         for i, domain in enumerate(domains):
-            self.shader.set_parameter("domainPositions[%d]" % i, domain[0] / mapData["width"], domain[1] / mapData["height"], domain[2])
+            self.shader.set_parameter("domainPositions[%d]" % i, domain[0] / mapData["width"], 1 - domain[1] / mapData["height"], domain[2])
 
         for i, color in enumerate(cst.MAP_PALETTE):
             self.shader.set_parameter("palette[%d]" % i, color)
