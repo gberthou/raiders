@@ -51,13 +51,14 @@ def generateTiles(n, width, height):
     return tiles
 
 def generateDomains(n, width, height):
+    MIN_SQUARE_DISTANCE = 25**2
     domains = []
     for y in range(DOMAIN_SPACE):
         for x in range(DOMAIN_SPACE):
             extremum = n.localExtremum(x / DOMAIN_SPACE, y / DOMAIN_SPACE)
             extremum = (width * extremum[0], height * extremum[1])
-            # Keep extremum only if not registered yet
-            if sum([noise.d2(extremum, (i[0], i[1]))<1 for i in domains]) == 0:
+            # Keep extremum only if not too close from the registered ones
+            if sum([noise.d2(extremum, (i[0], i[1])) < MIN_SQUARE_DISTANCE for i in domains]) == 0:
                 faction = random.randrange(FACTION_COUNT)
                 domains.append([extremum[0], extremum[1], faction])
 
@@ -99,6 +100,14 @@ def routesFromGraph(tiles, domains, graph, width):
 
             dx = goal[0] - p[0]
             dy = goal[1] - p[1]
+
+            if dx != 0 and dy != 0:
+                # Set filler road tile so that there is no pure diagonal
+                # (Manhattan distance between two adjacent road tiles should
+                # always be 1)
+                index = p[0] + sgn(dx) + p[1] * width
+                tiles[index] = 5
+
             p = (p[0] + sgn(dx) , p[1] + sgn(dy))
 
 def setDomainsAsDebug(tiles, domains, width):
