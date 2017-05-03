@@ -11,7 +11,8 @@ random.seed()
 
 NOISE_NODE_COUNT = 40
 WATER_LEVEL = 0.2
-MOUNTAIN_SLOPE = 0.1
+MIN_MOUNTAIN_SLOPE = 5
+MAX_PLAIN_SLOPE = 1
 
 DOMAIN_SPACE = 10
 DOMAIN_PROBA = 0.3
@@ -32,6 +33,15 @@ def sgn(x):
 
 def inWater(n, x, y):
     return n.at(x, y) < WATER_LEVEL
+def inForest(n, x, y):
+    z = n.at(x, y)
+    dx, dy = n.slopeAt(x, y)
+    slope = sqrt(dx*dx + dy*dy)
+    return z >= WATER_LEVEL and slope >= MAX_PLAIN_SLOPE and slope < MIN_MOUNTAIN_SLOPE
+def inMountain(n, x, y):
+    dx, dy = n.slopeAt(x, y)
+    slope = sqrt(dx*dx + dy*dy)
+    return not inWater(n, x, y) and not inForest(n, x, y) and slope > MIN_MOUNTAIN_SLOPE
 
 def generateTiles(n, width, height):
     tiles = [0] * (width * height)
@@ -43,13 +53,12 @@ def generateTiles(n, width, height):
 
             if inWater(n, X, Y):
                 tiles[index] = 4
+            elif inForest(n, X, Y):
+                tiles[index] = 2
+            elif inMountain(n, X, Y):
+                tiles[index] = 3
             else:
-                dx, dy = n.slopeAt(X, Y)
-                slope = sqrt(dx*dx + dy*dy)
-                if slope > MOUNTAIN_SLOPE:
-                    tiles[index] = 2
-                else:
-                    tiles[index] = 0
+                tiles[index] = 1
     return tiles
 
 def generateDomains(n, width, height):
