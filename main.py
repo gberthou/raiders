@@ -13,6 +13,7 @@ import resources
 import utils
 
 from sfml import sf
+import sfml.window
 
 def drawPause(window, rs):
     text = sf.Text()
@@ -122,7 +123,7 @@ if __name__ == "__main__":
             if event.type == sf.Event.CLOSED:
                 window.close()
             elif event.type == sf.Event.MOUSE_BUTTON_PRESSED:
-                if event["button"] == sf.Mouse.LEFT:
+                if event["button"] == sfml.window.Button.LEFT:
                     x, y = textureWorld.map_pixel_to_coords((event["x"], event["y"]))
                     # First, check if door
                     door = mapObstacles.doorAt(x, y)
@@ -138,7 +139,7 @@ if __name__ == "__main__":
                         em.selectFighter(fighter)
                     else: # No fighter underneath mouse cursor
                         em.unselectFighters()
-                elif event["button"] == sf.Mouse.RIGHT:
+                elif event["button"] == sfml.window.Button.RIGHT:
                     x, y = textureWorld.map_pixel_to_coords((event["x"], event["y"]))
                     em.assignTargetToSelected(x, y, mapObstacles)
             elif event.type == sf.Event.MOUSE_WHEEL_SCROLLED:
