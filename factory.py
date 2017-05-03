@@ -1,6 +1,7 @@
 import ecs
 import components as comp
 import constants as cst
+import chunkset
 
 from sfml import sf
 
@@ -30,6 +31,6 @@ class Factory:
 
     def createDefaultMap(self, mapData):
         default_map = self.em.createEntity()
-        default_map.addComponent(comp.DrawableMap(mapData))
+        default_map.addComponent(comp.DrawableMap(mapData, chunkset.ChunkSet(mapData)))
         return default_map
 

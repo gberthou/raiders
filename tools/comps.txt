@@ -7,7 +7,7 @@ Vulnerable,hpmax,currenthp,visibility
 Fighter,name,team,movSpeed,fov
 PhysicalObject,size
 Door,tile0,tile1,isOpen
-DrawableMap,surface
+DrawableMap,tilemap,chunkset
 DrawableObject,surface
 DrawableFighter,surface
 DrawableTop,surface

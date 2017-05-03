@@ -4,7 +4,7 @@ import components as comp
 import constants as cst
 import utils
 import assets
-import compiled
+import math
 
 from sfml import sf
 
@@ -17,7 +17,9 @@ class DrawMap(ecs.System):
         self.rs = rs
 
     def update(self, em, eventManager, dt):
-        tilemap = em.getEntitiesWithComponents([comp.DrawableMap])[0].component(comp.DrawableMap).surface
+        drawableMap = em.getEntitiesWithComponents([comp.DrawableMap])[0].component(comp.DrawableMap)
+
+        tilemap = drawableMap.tilemap
         width  = tilemap["width"]
         height = tilemap["height"]
 
@@ -25,19 +27,15 @@ class DrawMap(ecs.System):
         vlx, vly = self.window.map_pixel_to_coords((0, 0))
         vhx, vhy = self.window.map_pixel_to_coords((cst.WINDOW_WIDTH, cst.WINDOW_HEIGHT))
     
-        x0 = max(0, int(vlx/cst.TILE_SIZE))
-        x1 = min(width, int(vhx/cst.TILE_SIZE) + 1)
-        y0 = max(0, int(vly/cst.TILE_SIZE))
-        y1 = min(height, int(vhy/cst.TILE_SIZE) + 1)
-
-        quads = compiled.visibleMapVertexArray(x0, x1, y0, y1, width, tilemap)
-        if not quads:
-            return
-
         states = sf.RenderStates()
         states.texture = self.rs.tileset.texture
 
-        self.window.draw(quads, states)
+        x0 = math.floor(vlx/cst.TILE_SIZE)
+        x1 = math.ceil(vhx/cst.TILE_SIZE)
+        y0 = math.floor(vly/cst.TILE_SIZE)
+        y1 = math.ceil(vhy/cst.TILE_SIZE)
+        for chunk in drawableMap.chunkset.visibleChunks(x0, x1, y0, y1):
+            self.window.draw(chunk, states)
 
         # House debug
         for wall in self.mapObstacles.staticWalls | self.mapObstacles.dynamicWalls:

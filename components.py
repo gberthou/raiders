@@ -51,8 +51,9 @@ class Door(ecs.Component):
         self.isOpen = isOpen
 
 class DrawableMap(ecs.Component):
-    def __init__(self, surface):
-        self.surface = surface
+    def __init__(self, tilemap, chunkset):
+        self.tilemap = tilemap
+        self.chunkset = chunkset
 
 class DrawableObject(ecs.Component):
     def __init__(self, surface):

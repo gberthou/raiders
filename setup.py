@@ -7,11 +7,6 @@ extensions = [
         ["dijkstra.pyx"],
         extra_compile_args=["-g3"],
         extra_link_args=["-g3"]
-    ),
-    Extension("compiled",
-        ["compiled.pyx"],
-        extra_compile_args=["-g3"],
-        extra_link_args=["-g3"]
     )
 ]
 
