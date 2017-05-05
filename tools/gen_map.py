@@ -9,7 +9,7 @@ import noise
 
 random.seed()
 
-NOISE_NODE_COUNT = 40
+NOISE_NODE_COUNT = 16
 WATER_LEVEL = 0.2
 MIN_MOUNTAIN_SLOPE = 5
 MAX_PLAIN_SLOPE = 1
@@ -62,7 +62,7 @@ def generateTiles(n, width, height):
     return tiles
 
 def generateDomains(n, width, height):
-    MIN_SQUARE_DISTANCE = 25**2
+    MIN_SQUARE_DISTANCE = 48**2
     domains = []
     coordinates = [(x, y) for y in range(DOMAIN_SPACE) for x in range(DOMAIN_SPACE)]
     # Shuffle coordinates so that final distribution tends to be uniform
@@ -146,16 +146,6 @@ def setDomainsAsDebug(tiles, domains, width):
     for d in domains:
         index = int(d[0]) + int(d[1]) * width
         tiles[index] = 6
-        
-"""
-for y in range(height//DOMAIN_SPACE):
-    for x in range(width//DOMAIN_SPACE):
-        if random.random() < DOMAIN_PROBA:
-            a = (x + random.random()) * DOMAIN_SPACE
-            b = (y + random.random()) * DOMAIN_SPACE
-            faction = random.randrange(FACTION_COUNT)
-            domains.append([a, b, faction])
-"""
 
 if len(sys.argv) > 3:
     opath = sys.argv[1]
@@ -202,8 +192,8 @@ towrite += "\t\"tiles\": [%s],\n" % (",".join(str(i) for i in tiles))
 
 # Houses
 # Format: [house, house, house]
-# house = [housesetIndex, tileX, tileY]
-towrite += "\t\"houses\": [[0, 5, 10], [1, 10, 5]],\n"
+# house = [housesetIndex, tileX, tileY, orientation]
+towrite += "\t\"houses\": [[0, 5, 10, 2], [1, 10, 5, 1]],\n"
 
 # Domains
 towrite += '\t"domains": [%s]' % (",".join(str(i) for i in domains))

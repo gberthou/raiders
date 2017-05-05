@@ -2,7 +2,7 @@ from sfml import sf
 import constants as cst
 import math
 
-CHUNK_DIM = 16
+CHUNK_DIM = 64
 
 class ChunkSet:
     def __init__(self, mapdata):

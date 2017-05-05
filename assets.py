@@ -14,16 +14,34 @@ tileset = {
         cst.TileType.DEBUG      : sf.Color(255, 0, 0, 255)
 }
 
+def edge(a, b):
+    return (min(a, b), max(a, b))
+
 class Wall:
     def __init__(self, edge, isdoor = False):
         self.edge    = edge
         self.isdoor  = isdoor
         self.active  = True
 
-    def copyWithOffset(self, x, y):
+    def copyWithOffsetAndOrientation(self, x, y, orientation):
         ret = copy.copy(self)
-        ret.edge = ((ret.edge[0][0]+x, ret.edge[0][1]+y),
-                    (ret.edge[1][0]+x, ret.edge[1][1]+y))
+        if orientation == 1: # 90 degrees
+            # dx' = dy, dy' = -dx
+            ret.edge = edge((ret.edge[0][1]+x, -ret.edge[0][0]+y),
+                            (ret.edge[1][1]+x, -ret.edge[1][0]+y))
+        elif orientation == 2: # 180 degrees
+            # dx' = -dx, dy' = -dy
+            ret.edge = edge((-ret.edge[0][0]+x, -ret.edge[0][1]+y),
+                            (-ret.edge[1][0]+x, -ret.edge[1][1]+y))
+        elif orientation == 3: # 270 degrees
+            # dx' = -dy, dy' = dx
+            ret.edge = edge((-ret.edge[0][1]+x, ret.edge[0][0]+y),
+                            (-ret.edge[1][1]+x, ret.edge[1][0]+y))
+        else: # 0 degree
+            # dx' = dx, dy' = dy
+            # Edge data is already sorted
+            ret.edge = ((ret.edge[0][0]+x, ret.edge[0][1]+y),
+                        (ret.edge[1][0]+x, ret.edge[1][1]+y))
         return ret
 
 houseset = [

@@ -8,9 +8,9 @@ class Obstacles:
     def __init__(self, mapDesc):
         sWalls = []
         dWalls = []
-        for index, x, y in mapDesc["houses"]:
+        for index, x, y, orientation in mapDesc["houses"]:
             for wall in assets.houseset[index]:
-                w = wall.copyWithOffset(x, y)
+                w = wall.copyWithOffsetAndOrientation(x, y, orientation)
                 if w.isdoor:
                     dWalls.append(w)
                 else:
