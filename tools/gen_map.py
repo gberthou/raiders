@@ -2,10 +2,11 @@
 
 import sys
 import random
-from math import sqrt
+from math import sqrt, floor
 from matplotlib import pyplot as plt
 
 import noise
+import villageFactory
 
 random.seed()
 
@@ -13,6 +14,8 @@ NOISE_NODE_COUNT = 16
 WATER_LEVEL = 0.2
 MIN_MOUNTAIN_SLOPE = 5
 MAX_PLAIN_SLOPE = 1
+
+MAX_VILLAGE_SIZE = 24
 
 DOMAIN_SPACE = 10
 DOMAIN_PROBA = 0.3
@@ -62,7 +65,7 @@ def generateTiles(n, width, height):
     return tiles
 
 def generateDomains(n, width, height):
-    MIN_SQUARE_DISTANCE = 48**2
+    MIN_SQUARE_DISTANCE = (MAX_VILLAGE_SIZE*2)**2
     domains = []
     coordinates = [(x, y) for y in range(DOMAIN_SPACE) for x in range(DOMAIN_SPACE)]
     # Shuffle coordinates so that final distribution tends to be uniform
@@ -83,6 +86,16 @@ def generateDomains(n, width, height):
 
     return domains
 
+def genVillages(domains, width, height):
+    houses = []
+    for x, y, _ in domains:
+        x0 = floor(max(0, x - MAX_VILLAGE_SIZE/2))
+        x1 = floor(min(width, x + MAX_VILLAGE_SIZE/2))
+        y0 = floor(max(0, y - MAX_VILLAGE_SIZE/2))
+        y1 = floor(min(height, y + MAX_VILLAGE_SIZE/2))
+        houses.extend(villageFactory.genVillage((x0, y0, x1, y1)))
+    return houses
+
 def domainGraph(domains):
     graph = set()
     coveredDomains = set()
@@ -100,7 +113,7 @@ def domainGraph(domains):
         t = [(distances[max(i, j)][min(i, j)], j) for j in range(domainCount) if i != j]
         t.sort()
         # Add the 3 closest domains as edges, if not already present
-        graph = graph.union({edge(i, item[1]) for item in t[:3]})
+        graph = graph | {edge(i, item[1]) for item in t[:3]}
 
     return graph
 
@@ -140,7 +153,7 @@ def routesFromGraph(tiles, n, domains, graph, width, height):
                 tiles[index] = 5
 
             p = (p[0] + dx , p[1] + dy)
-            path = path.union({p})
+            path = path | {p}
 
 def setDomainsAsDebug(tiles, domains, width):
     for d in domains:
@@ -173,6 +186,10 @@ domains = []
 print("Generating domains...")
 domains = generateDomains(mn, width, height)
 
+# Create villages
+print("Generating villages...")
+houses = genVillages(domains, width, height)
+
 # Generate roads
 print("Generating roads...")
 graph = domainGraph(domains)
@@ -193,7 +210,7 @@ towrite += "\t\"tiles\": [%s],\n" % (",".join(str(i) for i in tiles))
 # Houses
 # Format: [house, house, house]
 # house = [housesetIndex, tileX, tileY, orientation]
-towrite += "\t\"houses\": [[0, 5, 10, 2], [1, 10, 5, 1]],\n"
+towrite += "\t\"houses\": %s,\n" % str(houses)
 
 # Domains
 towrite += '\t"domains": [%s]' % (",".join(str(i) for i in domains))

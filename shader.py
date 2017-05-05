@@ -4,7 +4,7 @@ import utils
 from sfml import sf
 
 FOV_SHADER_RANGE_COUNT = 16
-FOV_SHADER_EDGE_COUNT  = 256
+FOV_SHADER_EDGE_COUNT  = 2048
 
 def isWallVisible(wall, target):
     a = (wall.edge[1][0]*cst.TILE_SIZE, wall.edge[1][1]*cst.TILE_SIZE)
@@ -37,10 +37,8 @@ class FieldOfViewShader:
         for i in range(FOV_SHADER_EDGE_COUNT):
             self.shader.set_parameter("edges[%d]" % i, 0, 0, 0, 0)
 
-
-    def update(self, em, playerTeam, timeMachine, mapObstacles, target):
+    def updateFighters(self, em, playerTeam, target):
         nRange = 0
-
         zoom_factor = cst.WINDOW_WIDTH / target.view.size.x
 
         # Set fighters ranges
@@ -54,8 +52,8 @@ class FieldOfViewShader:
                 nRange += 1
         for i in range(nRange, FOV_SHADER_RANGE_COUNT):
             self.shader.set_parameter("ranges[%d]" % i, 0)
-        self.shader.set_parameter("baseLuminance", timeMachine.getLuminance())
 
+    def updateEdges(self, mapObstacles, target):
         # Set map edges
         wallList = mapObstacles.activeEdges()
         visible  = [isWallVisible(w, target) for w in wallList]
@@ -69,6 +67,9 @@ class FieldOfViewShader:
             self.shader.set_parameter("edges[%d]" % i, j[0], j[1], j[2], j[3])
         for i in range(len(edges), FOV_SHADER_RANGE_COUNT):
             self.shader.set_parameter("edges[%d]" % i, sf.Color(0, 0, 0, 0))
+
+    def updateLuminance(self, timeMachine):
+        self.shader.set_parameter("baseLuminance", timeMachine.getLuminance())
 
 class MapShader:
     def __init__(self, filename, mapData):

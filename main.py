@@ -118,6 +118,11 @@ if __name__ == "__main__":
 
     oldVisibleEnnemies = set()
 
+    # Init FOV shader
+    rs.fovShader.updateFighters(em, 0, textureWorld)
+    rs.fovShader.updateLuminance(tm)
+    rs.fovShader.updateEdges(mapObstacles, textureWorld)
+
     while window.is_open:
         for event in window.events:
             if event.type == sf.Event.CLOSED:
@@ -186,7 +191,13 @@ if __name__ == "__main__":
         textureWorld.display()
         textureHUD.display()
 
-        rs.fovShader.update(em, 0, tm, mapObstacles, textureWorld)
+        # Assume that fighters move very often, so update their shader variables
+        # on every frame
+        rs.fovShader.updateFighters(em, 0, textureWorld)
+        rs.fovShader.updateLuminance(tm)
+
+        # TODO: update edges only when any door is toggled
+        rs.fovShader.updateEdges(mapObstacles, textureWorld)
 
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))
