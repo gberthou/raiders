@@ -11,7 +11,8 @@ tileset = {
         cst.TileType.MOUNTAIN   : sf.Color(139, 90, 43, 255),
         cst.TileType.WATER      : sf.Color(0, 178, 238, 255),
         cst.TileType.ROAD       : sf.Color(193, 193, 193, 255),
-        cst.TileType.DEBUG      : sf.Color(255, 0, 0, 255)
+        cst.TileType.DEBUG      : sf.Color(255, 0, 0, 255),
+        cst.TileType.INDOORS    : sf.Color(128, 128, 128, 255)
 }
 
 def edge(a, b):

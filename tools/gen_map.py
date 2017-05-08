@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 
 import noise
 import villageFactory
+import dijkstra
 
 random.seed()
 
@@ -96,64 +97,52 @@ def genVillages(domains, width, height):
         houses.extend(villageFactory.genVillage((x0, y0, x1, y1)))
     return houses
 
-def domainGraph(domains):
+# nodes: [(x0, y0), (x1, y1), ...]
+def routeGraph(nodes):
     graph = set()
-    coveredDomains = set()
-    domainCount = len(domains)
+    coveredNodes = set()
+    nodeCount = len(nodes)
 
     # Compute pairwise distances
     distances = []
-    for i in range(domainCount):
-        t = [noise.d2((domains[i][0], domains[i][1]), (domains[j][0], domains[j][1])) for j in range(i)]
+    for i in range(nodeCount):
+        t = [noise.d2((nodes[i][0], nodes[i][1]), (nodes[j][0], nodes[j][1])) for j in range(i)]
         distances.append(t)
 
     # For all Origin in Domains
-    for i in range(domainCount):
+    for i in range(nodeCount):
         # Get distance between Origin and all other nodes
-        t = [(distances[max(i, j)][min(i, j)], j) for j in range(domainCount) if i != j]
+        t = [(distances[max(i, j)][min(i, j)], j) for j in range(nodeCount) if i != j]
         t.sort()
         # Add the 3 closest domains as edges, if not already present
         graph = graph | {edge(i, item[1]) for item in t[:3]}
 
     return graph
 
-def routesFromGraph(tiles, n, domains, graph, width, height):
-    # No domain can be located inside a water tile (cf. generateDomains)
+def routesFromGraph(tiles, nodes, graph, width, height):
+    # Assumes that no node is inside a water tile or an indoor tile
+
+    # forbiddenTiles: All tiles that are water or indoors
+    class DijkstraObstacles:
+        def __init__(self, forbiddenTiles):
+            self.nodes = forbiddenTiles
+
+        def activeEdges(self):
+            return set()
+
+    # TODO: Magical values
+    forbiddenTiles = set((x, y) for y in range(height) for x in range(width) if tiles[x + y*width] == 4 or tiles[x + y*width] == 7)
+    mapObstacles = DijkstraObstacles(forbiddenTiles)
+
     for e in graph:
-        p    = (int(domains[e[0]][0]), int(domains[e[0]][1]))
-        goal = (int(domains[e[1]][0]), int(domains[e[1]][1]))
-        path = {p}
-        while p != goal:
-            index = p[0] + p[1] * width
-            # Set current tile as road
-            tiles[index] = 5
-
-            dx = sgn(goal[0] - p[0])
-            dy = sgn(goal[1] - p[1])
-
-            # Do not cross water (bridges yet to come?)
-            if inWater(n, (p[0] + dx) / width, (p[1] + dy) / height):
-                # t = array of (distance to goal, dx, dy)
-                t = []
-                for ax, ay in [(i, j) for i in range(-1, 2) for j in range(-1, 2) if i != 0 or j != 0]:
-                    q = (p[0] + ax, p[1] + ay)
-                    if q in path or inWater(n, q[0] / width, q[1] / height):
-                        continue
-                    t.append((noise.d2(q, goal), ax, ay))
-                # Sort array by distance to goal
-                t.sort()
-                # Take the closest solution to goal
-                dx, dy = t[0][1:] # TODO: Sometimes crashes because t = [] when algorithm comes to a dead end
-
-            if dx != 0 and dy != 0:
-                # Set filler road tile so that there is no pure diagonal
-                # (Manhattan distance between two adjacent road tiles should
-                # always be 1)
-                index = p[0] + dx + p[1] * width
-                tiles[index] = 5
-
-            p = (p[0] + dx , p[1] + dy)
-            path = path | {p}
+        p    = (int(nodes[e[0]][0]), int(nodes[e[0]][1]))
+        goal = (int(nodes[e[1]][0]), int(nodes[e[1]][1]))
+        
+        path = dijkstra.searchPath((0, 0, width, height), mapObstacles, p, goal)
+        for position in path:
+            x, y = position
+            # TODO: Magical values
+            tiles[x + y * width] = 5
 
 def setDomainsAsDebug(tiles, domains, width):
     for d in domains:
@@ -189,14 +178,16 @@ domains = generateDomains(mn, width, height)
 # Create villages
 print("Generating villages...")
 houses = genVillages(domains, width, height)
+villageFactory.houses2tiles(houses, tiles, width)
 
 # Generate roads
 print("Generating roads...")
-graph = domainGraph(domains)
-routesFromGraph(tiles, mn, domains, graph, width, height)
-
-# Debug
-setDomainsAsDebug(tiles, domains, width)
+inns          = [h.absoluteDoorPosition() for h in houses if h.isInn()]
+regularHouses = [h.absoluteDoorPosition() for h in houses if not h.isInn()]
+innGraph = routeGraph(inns)
+housesGraph = routeGraph(regularHouses)
+routesFromGraph(tiles, inns, innGraph, width, height)
+routesFromGraph(tiles, regularHouses, housesGraph, width, height)
 
 # Output
 towrite = "{\n"
@@ -210,7 +201,7 @@ towrite += "\t\"tiles\": [%s],\n" % (",".join(str(i) for i in tiles))
 # Houses
 # Format: [house, house, house]
 # house = [housesetIndex, tileX, tileY, orientation]
-towrite += "\t\"houses\": %s,\n" % str(houses)
+towrite += "\t\"houses\": [%s],\n" % (",".join(str(h) for h in houses))
 
 # Domains
 towrite += '\t"domains": [%s]' % (",".join(str(i) for i in domains))
