@@ -124,6 +124,8 @@ if __name__ == "__main__":
     rs.fovShader.updateEdges(mapObstacles, textureWorld)
 
     while window.is_open:
+        edgeUpdateRequired = False
+
         for event in window.events:
             if event.type == sf.Event.CLOSED:
                 window.close()
@@ -136,6 +138,8 @@ if __name__ == "__main__":
                     and (em.hasAllyAtTile(door.edge[0][0], door.edge[0][1], 0)
                     or   em.hasAllyAtTile(door.edge[1][0], door.edge[1][1], 0))):
                         door.active = not door.active
+                        # Update edges only when a door is toggled
+                        edgeUpdateRequired = True
                         continue
 
                     # If not door, check if fighter
@@ -194,10 +198,15 @@ if __name__ == "__main__":
         # Assume that fighters move very often, so update their shader variables
         # on every frame
         rs.fovShader.updateFighters(em, 0, textureWorld)
+        # Luminance changes every frame
         rs.fovShader.updateLuminance(tm)
+        # View is not updated on every frame, but updating this part of the
+        # shader is not costly
+        rs.fovShader.updateView(zoom, viewWorld.center)
 
-        # TODO: update edges only when any door is toggled
-        rs.fovShader.updateEdges(mapObstacles, textureWorld)
+        # Update edges only when required
+        if edgeUpdateRequired:
+            rs.fovShader.updateEdges(mapObstacles, textureWorld)
 
         window.draw(sf.Sprite(textureWorld.texture), states)
         window.draw(sf.Sprite(textureHUD.texture))

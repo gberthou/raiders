@@ -308,4 +308,3 @@ class PlayerAttack(ecs.System):
             target.dt += dt
             target.dt -= nHits / atkSpeed
 
-

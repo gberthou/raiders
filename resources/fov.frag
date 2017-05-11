@@ -1,5 +1,6 @@
 uniform sampler2D texture;
-uniform float     aspectRatio;
+uniform vec2      zoomFactor;
+uniform vec2      viewOffset;
 uniform float     baseLuminance;
 
 uniform vec2      allies[16];
@@ -7,7 +8,7 @@ uniform float     ranges[16];
 
 uniform vec4      edges[2048];
 
-const float ATTENUATION = .01;
+const float ATTENUATION = 8.; // 8px
 
 float cross2(vec2 a, vec2 b)
 {
@@ -26,41 +27,35 @@ bool segmentsIntersect(int edgeOffset, vec2 a, vec2 b)
     return t >= 0. && t <= 1. && u >= 0. && u <= 1.;
 }
 
-float distanceScaleInsensitive2(vec2 a, vec2 b)
-{
-    float dx = (a.x - b.x);
-    float dy = (a.y - b.y) / aspectRatio;
-    return dx * dx + dy * dy;
-}
-
-float computeFactor(float x2, float range)
+float computeFactor(float x, float range)
 {
     if(range <= 0.)
         return 0.;
 
-    float range2 = range * range;
-
-    if(x2 <= range2)
+    if(x <= range)
         return 1.;
 
     float a = -1. / (ATTENUATION * (2. * range + ATTENUATION));
-    float c = 1. - a * range2;
-    return clamp(a * x2 + c, 0., 1.);
+    float c = 1. - a * range * range;
+    return clamp(a * x * x + c, 0., 1.);
 }
 
 float computeLight(vec2 position)
 {
     float ret = 0.;
+
+    position = vec2(position.x - .5, 1. - position.y - .5) * zoomFactor + viewOffset;
+
     for(int i = 0; i < 16; ++i)
     {
         if(ranges[i] == 0.)
             continue;
 
-        float d2 = distanceScaleInsensitive2(position, allies[i]);
+        float d = distance(position, allies[i]);
         /* Optimization: if distance >= 110% of range, do not waste time on
          * computing segment intersections, light contribution is 0
          */
-        if(d2 >= ranges[i]*ranges[i]*1.21)
+        if(d >= ranges[i]*1.1)
             continue;       
 
         bool hidden = false;
@@ -68,7 +63,7 @@ float computeLight(vec2 position)
             hidden = segmentsIntersect(j, position, allies[i]);
 
         if(!hidden)
-            ret += computeFactor(d2, ranges[i]);
+            ret += computeFactor(d, ranges[i]);
     }
 
     return clamp(ret, baseLuminance, 1.);

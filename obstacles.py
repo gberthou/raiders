@@ -18,7 +18,7 @@ class Obstacles:
         
         self.staticWalls = set(sWalls)
         self.dynamicWalls = set(dWalls)
-        self.nodes = {}
+        self.nodes = set()
 
     def doorAt(self, x, y):
         for wall in self.dynamicWalls:

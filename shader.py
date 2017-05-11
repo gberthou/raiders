@@ -6,6 +6,15 @@ from sfml import sf
 FOV_SHADER_RANGE_COUNT = 16
 FOV_SHADER_EDGE_COUNT  = 2048
 
+def wall2tuple(wall):
+    a = (wall.edge[1][0]*cst.TILE_SIZE, wall.edge[1][1]*cst.TILE_SIZE)
+    if utils.isHorizontal(wall):
+        b = (a[0], a[1] + cst.TILE_SIZE)
+    else:
+        b = (a[0] + cst.TILE_SIZE, a[1])
+    return (a, b)
+
+"""
 def isWallVisible(wall, target):
     a = (wall.edge[1][0]*cst.TILE_SIZE, wall.edge[1][1]*cst.TILE_SIZE)
     if utils.isHorizontal(wall):
@@ -20,12 +29,15 @@ def isWallVisible(wall, target):
     # Should be [0,1] +- maxrange/cst.WINDOW_WIDTH
     ret = [i[0] >= -1 and i[0] < 2 and i[1] >= -1 and i[1] < 2 for i in tmp]
     return (ret[0] or ret[1], tmp)
+"""
 
 class FieldOfViewShader:
     def __init__(self, filename):
         self.shader = sf.Shader.from_file(fragment = filename)
         self.shader.set_parameter("texture")
         self.shader.set_parameter("aspectRatio", cst.WINDOW_WIDTH / cst.WINDOW_HEIGHT);
+        self.shader.set_parameter("zoomFactor", (0, 0))
+        self.shader.set_parameter("viewOffset", (0, 0))
         self.shader.set_parameter("baseLuminance", 0.)
 
         self.reinit()
@@ -39,37 +51,38 @@ class FieldOfViewShader:
 
     def updateFighters(self, em, playerTeam, target):
         nRange = 0
-        zoom_factor = cst.WINDOW_WIDTH / target.view.size.x
 
         # Set fighters ranges
         for e in em.getEntitiesWithComponents([comp.Fighter, comp.Position]):
             fighter = e.component(comp.Fighter) 
             if fighter.team == playerTeam: 
                 pos = e.component(comp.Position)
-                pos = target.map_coords_to_pixel((pos.x + .5 * cst.TILE_SIZE, pos.y + .5 * cst.TILE_SIZE))
-                self.shader.set_parameter("allies[%d]" % nRange, (pos.x / cst.WINDOW_WIDTH, 1 - pos.y / cst.WINDOW_HEIGHT))
-                self.shader.set_parameter("ranges[%d]" % nRange, fighter.fov * zoom_factor / cst.WINDOW_WIDTH)
+                pos = ((pos.x + .5 * cst.TILE_SIZE, pos.y + .5 * cst.TILE_SIZE))
+                self.shader.set_parameter("allies[%d]" % nRange, pos)
+                self.shader.set_parameter("ranges[%d]" % nRange, fighter.fov)
                 nRange += 1
         for i in range(nRange, FOV_SHADER_RANGE_COUNT):
             self.shader.set_parameter("ranges[%d]" % i, 0)
 
     def updateEdges(self, mapObstacles, target):
         # Set map edges
-        wallList = mapObstacles.activeEdges()
-        visible  = [isWallVisible(w, target) for w in wallList]
-        visible  = [j for i,j in visible if i]
+        wallList = list(wall2tuple(w) for w in mapObstacles.activeEdges())
 
-        if len(visible) > FOV_SHADER_EDGE_COUNT:
+        if len(wallList) > FOV_SHADER_EDGE_COUNT:
             raise Exception("Unable to allocate that many edges: %d/%d" % (len(visible), FOV_SHADER_EDGE_COUNT))
 
-        edges = [(v[0][0], (1-v[0][1]), v[1][0], (1-v[1][1])) for v in visible]
+        edges = [(w[0][0], w[0][1], w[1][0], w[1][1]) for w in wallList]
         for i,j in enumerate(edges):
             self.shader.set_parameter("edges[%d]" % i, j[0], j[1], j[2], j[3])
-        for i in range(len(edges), FOV_SHADER_RANGE_COUNT):
+        for i in range(len(edges), FOV_SHADER_EDGE_COUNT):
             self.shader.set_parameter("edges[%d]" % i, sf.Color(0, 0, 0, 0))
 
     def updateLuminance(self, timeMachine):
         self.shader.set_parameter("baseLuminance", timeMachine.getLuminance())
+
+    def updateView(self, zoomFactor, viewOffset):
+        self.shader.set_parameter("zoomFactor", (zoomFactor * cst.WINDOW_WIDTH, zoomFactor * cst.WINDOW_HEIGHT))
+        self.shader.set_parameter("viewOffset", viewOffset)
 
 class MapShader:
     def __init__(self, filename, mapData):
