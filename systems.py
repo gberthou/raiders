@@ -232,8 +232,9 @@ class Teleportation(ecs.System):
             e.removeComponent(comp.Selected)
 
 class MovementAI(ecs.System):
-    def __init__(self, mapObstacles):
+    def __init__(self, mapObstacles, mapData):
         self.mapObstacles = mapObstacles
+        self.mapData      = mapData
 
     def update(self, em, eventManager, dt):
         for e in em.getEntitiesWithComponents([comp.Position, comp.MovementTarget, comp.Fighter]):
@@ -248,7 +249,7 @@ class MovementAI(ecs.System):
                 e.removeComponent(comp.Path)
             else:
                 if not e.hasComponent(comp.Path):
-                    p = utils.pathToTile(e, targetTile, self.mapObstacles)
+                    p = utils.pathToTile(e, targetTile, self.mapObstacles, self.mapData)
                     if p == None: # No path found
                         e.removeComponent(comp.MovementTarget)
                         e.removeComponent(comp.Selected)

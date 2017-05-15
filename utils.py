@@ -93,11 +93,12 @@ def closestTileInRange(posWorld, targetWorld, rang):
     delta = (floorTowardsZero(vector[0] * factor), floorTowardsZero(vector[1] * factor))
     return (t[0] + delta[0], t[1] + delta[1])
 
-def pathToTile(entity, targetTile, mapObstacles):
+def pathToTile(entity, targetTile, mapObstacles, mapData):
     pos = entity.component(comp.Position)
     currentTile = world2grid((pos.x, pos.y))
     area = (currentTile[0] - 30, currentTile[1] - 30, currentTile[0] + 30, currentTile[1] + 30)
-    return dijkstra.searchPath(area, mapObstacles, currentTile, targetTile)
+    velocity = lambda x,y : cst.tileVelocity[cst.TileType(mapData["tiles"][x + y * mapData["width"]])]
+    return dijkstra.searchPath(area, mapObstacles, currentTile, targetTile, velocity)
 
 # Scrolling
 

@@ -85,7 +85,8 @@ if __name__ == "__main__":
     pelo.addComponent(comp.Leader())
 
     copain = facto.createDefaultFighter()
-    copain.component(comp.Position).y = 352
+    copain.component(comp.Position).x = 1056
+    copain.component(comp.Position).y = 1760
     copain.component(comp.Fighter).name = "Jeannot"
 
     foe = facto.createDefaultFighter()
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     app.addSystem(systems.DrawWeaponRange(textureHUD, viewWorld))
     app.addSystem(sDTHUD)
     app.addSystem(systems.DrawFPS(textureHUD, rs))
-    app.addSystem(systems.MovementAI(mapObstacles))
+    app.addSystem(systems.MovementAI(mapObstacles, mapData))
     app.addSystem(systems.PlayerAttack())
 
     clock = sf.Clock()

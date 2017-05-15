@@ -25,7 +25,7 @@ cdef edge(a, b):
 
 # x1 > x0
 # y1 > y0
-cdef dijkstra(area, mapObstacles, start, goal):
+cdef dijkstra(area, mapObstacles, start, goal, velocity = lambda x,y:1):
     cdef coord_t x0, y0, x1, y1, startX, startY, goalX, goalY
 
     x0, y0, x1, y1 = area
@@ -60,8 +60,12 @@ cdef dijkstra(area, mapObstacles, start, goal):
         for neighbor in neighborsOf(minDistPoint):
             if neighbor in visitedSet:
                 continue
+
+            # TODO: change that into mapobstacles.nodes
+            if velocity(neighbor[0], neighbor[1]) == 0:
+                continue
             # What does "alt" stand for? -> alternative distance I guess
-            alt = minDistance + 1 + calcDistance(neighbor, goal) # A* like
+            alt = minDistance + 1e4 / velocity(neighbor[0], neighbor[1]) + calcDistance(neighbor, goal) # A* like
             if neighbor not in distMap.keys() or alt < distMap[neighbor]:
                 e = edge(neighbor, minDistPoint)
                 if e not in walls:
@@ -69,11 +73,11 @@ cdef dijkstra(area, mapObstacles, start, goal):
                     prevMap[neighbor] = minDistPoint
     return prevMap
 
-def searchPath(area, mapObstacles, start, goal):
+def searchPath(area, mapObstacles, start, goal, velocity):
     if start == goal:
         return [start]
     
-    prevMap = dijkstra(area, mapObstacles, start, goal)
+    prevMap = dijkstra(area, mapObstacles, start, goal, velocity)
     if goal not in prevMap.keys(): # No path
         return None
 

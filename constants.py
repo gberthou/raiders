@@ -12,6 +12,17 @@ TileType = Enum("TileType", [
     ("INDOORS", 7)
     ])
 
+
+tileVelocity = {
+        TileType.PLAIN      : 1,
+        TileType.FOREST     : .8,
+        TileType.MOUNTAIN   : .5,
+        TileType.WATER      : 0,
+        TileType.ROAD       : 1.4,
+        TileType.INDOORS    : 1.5
+}
+
+
 TILE_SIZE = 32
 WINDOW_WIDTH = 640 #20*32
 WINDOW_HEIGHT = 640
