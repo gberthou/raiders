@@ -26,51 +26,53 @@ cdef edge(a, b):
 # x1 > x0
 # y1 > y0
 cdef dijkstra(area, mapObstacles, start, goal, velocity = lambda x,y:1):
-    cdef coord_t x0, y0, x1, y1, startX, startY, goalX, goalY
-
+    cdef coord_t x0, y0, x1, y1
     x0, y0, x1, y1 = area
-    startX, startY = start
-    goalX, goalY   = goal
     visitedSet     = set() | mapObstacles.nodes
     prevMap        = dict()
     
-    distMap = {(startX, startY) : 0}
+    distMap = {start : (calcDistance(start, goal),0)} # Value format: (fScore, gScore)
 
     walls = set(w.edge for w in mapObstacles.activeEdges())
 
-    cdef dist_t distance, minDistance
+    cdef dist_t minF, f, gOfMinF, minDistance
     cdef long i 
     for i in range((x1-x0+1) * (y1-y0+1)):
-        minDistance = DIST_MAX
-        minDistPoint = None
-        for point, distance in distMap.items():
-            if distance < minDistance and (point not in visitedSet):
-                minDistance = distance
-                minDistPoint = point
+        minF = DIST_MAX
+        gOfMinF = DIST_MAX
+        minFPoint = None
+        for point, distances in distMap.items():
+            f, g = distances
+            if f < minF and (point not in visitedSet):
+                minF = f
+                gOfMinF = g
+                minFPoint = point
 
-        if minDistPoint == None:
+        if minFPoint == None:
             break
 
-        if minDistPoint[0] == goalX and minDistPoint[1] == goalY: # Mathematical proof of correctness?
+        if minFPoint == goal: # Mathematical proof of correctness?
             break
 
-        visitedSet.add(minDistPoint)
-        del distMap[minDistPoint]
+        visitedSet.add(minFPoint)
+        del distMap[minFPoint]
 
-        for neighbor in neighborsOf(minDistPoint):
+        for neighbor in neighborsOf(minFPoint):
             if neighbor in visitedSet:
+                continue
+
+            # If wall, ignore neighbor
+            e = edge(neighbor, minFPoint)
+            if e in walls:
                 continue
 
             # TODO: change that into mapobstacles.nodes
             if velocity(neighbor[0], neighbor[1]) == 0:
                 continue
-            # What does "alt" stand for? -> alternative distance I guess
-            alt = minDistance + 1e4 / velocity(neighbor[0], neighbor[1]) + calcDistance(neighbor, goal) # A* like
-            if neighbor not in distMap.keys() or alt < distMap[neighbor]:
-                e = edge(neighbor, minDistPoint)
-                if e not in walls:
-                    distMap[neighbor] = alt
-                    prevMap[neighbor] = minDistPoint
+            tentativeG = gOfMinF + 1 / velocity(neighbor[0], neighbor[1])
+            if neighbor not in distMap.keys() or tentativeG < distMap[neighbor][1]:
+                distMap[neighbor] = (tentativeG + calcDistance(neighbor, goal)/velocity(neighbor[0], neighbor[1]), tentativeG)
+                prevMap[neighbor] = minFPoint
     return prevMap
 
 def searchPath(area, mapObstacles, start, goal, velocity):

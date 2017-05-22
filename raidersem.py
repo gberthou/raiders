@@ -25,7 +25,7 @@ class RaidersEntityManager(ecs.EntityManager):
         self.unselectFighters()
         fighter.addComponent(comp.Selected())
 
-    def assignTargetToSelected(self, x, y, mapObstacles):
+    def assignTargetToSelected(self, x, y, mapObstacles, mapData):
         foe = self.fighterAt(x, y)
 
         tileX = int(x // cst.TILE_SIZE)
@@ -36,7 +36,7 @@ class RaidersEntityManager(ecs.EntityManager):
             selected = selected[0]
             if foe == None or not utils.oneCanSee([selected], foe, mapObstacles):
                 selected.removeComponent(comp.AttackTarget)
-                if not selected.hasComponent(comp.MovementTarget) or selected.component(comp.MovementTarget).target != (tileX, tileY) and utils.pathToTile(selected, (tileX, tileY), mapObstacles):
+                if not selected.hasComponent(comp.MovementTarget) or selected.component(comp.MovementTarget).target != (tileX, tileY) and utils.pathToTile(selected, (tileX, tileY), mapObstacles, mapData):
                     selected.removeComponent(comp.Path)
                     selected.addComponent(comp.MovementTarget((tileX, tileY)))
             elif utils.areFoes(selected, foe):

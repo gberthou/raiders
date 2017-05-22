@@ -263,10 +263,13 @@ class MovementAI(ecs.System):
                 if utils.norm2(delta) < 1:
                     path.currentIndex += 1
 
+                # Apply velocity of the underlying tile
+                velocity = cst.tileVelocity[cst.TileType(self.mapData["tiles"][currentTile[0] + currentTile[1] * self.mapData["width"]])]
+
                 length = utils.norm(delta)
-                if length > fighter.movSpeed * dt:
-                    movement = (delta[0] * fighter.movSpeed * dt / length, delta[1] * fighter.movSpeed * dt / length)
-                else:
+                if length > fighter.movSpeed * dt * velocity: # If destination is too far to be reached within one turn
+                    movement = (delta[0] * fighter.movSpeed * dt * velocity / length, delta[1] * fighter.movSpeed * dt * velocity / length)
+                else: # If destination can be reached within one turn
                     movement = (delta[0], delta[1])
 
                 pos.x += movement[0]
